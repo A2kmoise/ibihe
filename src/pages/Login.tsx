@@ -35,7 +35,7 @@ export default function LoginPage() {
     <div className="flex min-h-screen">
       {/* Left Side - Hero Image */}
       <div className="relative hidden w-1/2 lg:block">
-        <div className="absolute inset-0 bg-gradient-to-br from-foreground via-foreground/95 to-foreground/90">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary/95 to-emerald-600">
           <img
             src="https://images.unsplash.com/photo-1519681393784-d120267933ba?w=1200&h=1200&fit=crop"
             alt="Hero"
@@ -44,7 +44,7 @@ export default function LoginPage() {
         </div>
         <div className="relative flex h-full flex-col justify-between p-12">
           <div className="flex items-center gap-2">
-            <svg className="h-10 w-10 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg className="h-10 w-10 text-primary text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M12 19l7-7 3 3-7 7-3-3z"></path>
               <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"></path>
               <path d="M2 2l7.586 7.586"></path>

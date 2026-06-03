@@ -1,11 +1,11 @@
 import { useAuth } from '@/lib/auth-context'
 import { useState, FormEvent } from 'react'
-import { api } from '@/lib/api/client'
 import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
+import { api } from '@/lib/api/client'
 
 export default function ProfilePage() {
-  const { user, refresh } = useAuth()
+  const { user, refresh, updateProfile } = useAuth()
   const [name, setName] = useState(user?.name || '')
   const [email, setEmail] = useState(user?.email || '')
   const [current, setCurrent] = useState('')
@@ -17,7 +17,7 @@ export default function ProfilePage() {
     e.preventDefault()
     setSavingProfile(true)
     try {
-      await api.updateProfile({ name, email })
+      await updateProfile(name, email)
       await refresh()
       toast.success('Profile updated')
     } catch (e: any) {

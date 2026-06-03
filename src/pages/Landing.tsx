@@ -233,7 +233,7 @@ export default function LandingPage() {
       </section>
 
       {/* Partnership Banner */}
-      <section className="border-b border-border  from-primary/10 to-primary/5">
+      <section className="border-b border-border bg-linear-to-r from-primary via-primary to-emerald-600">
         <div className="mx-auto max-w-7xl px-4 py-6">
           <div className="flex flex-col gap-3 rounded-xl border border-primary/20 bg-background/50 p-6 shadow-modern backdrop-blur-sm md:flex-row md:items-center md:justify-between">
             <div>
