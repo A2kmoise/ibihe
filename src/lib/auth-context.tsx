@@ -8,7 +8,8 @@ export interface AuthState {
   loading: boolean;
   login: (email: string, password: string, remember?: boolean) => Promise<User>;
   register: (email: string, password: string, name: string) => Promise<void>;
-  logout: () => void;
+  logout: () => Promise<void>;
+  updateProfile: (name: string, email: string) => Promise<void>;
   hasRole: (role: Role) => boolean;
   refresh: () => Promise<void>;
 }
@@ -57,9 +58,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     async register(email, password, name) {
       await api.register(email, password, name);
     },
-    logout() {
+    logout: async () => {
+      try {
+        await api.logout();
+      } catch (e) {
+        console.error('Logout API error', e);
+      }
       clearToken();
       setUser(null);
+    },
+    async updateProfile(name: string, email: string) {
+      if (!user?.id) throw new Error('No user ID');
+      await api.updateUserProfile(user.id, { name, email });
+      await refresh();
     },
     refresh,
   };

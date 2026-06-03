@@ -85,6 +85,16 @@ export const mockApi = {
     if (u.suspended) throw new Error("Account suspended");
     return { token: "mock-jwt." + btoa(u.id) + ".token", user: u };
   },
+
+  // New mock logout implementation
+  async logout() {
+    // In a real backend this would invalidate the token server‑side.
+    // For the mock we simply resolve a success string.
+    await wait();
+    return "logged out";
+  },
+
+
   async register(email: string, password: string, name: string) {
     await wait();
     if (USERS.some((u) => u.email === email)) throw new Error("Email already registered");

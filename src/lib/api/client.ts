@@ -43,7 +43,36 @@ async function http<T>(path: string, opts: RequestInit = {}): Promise<T> {
   return res.json() as Promise<T>;
 }
 
-export const api = {
+// Explicit API typing
+interface Api {
+  // Auth
+  login(email: string, password: string): Promise<{ token: string; user: User }>;
+  register(email: string, password: string, name: string): Promise<{ user: User }>;
+  me(): Promise<{ user: User }>;
+  logout(): Promise<void>;
+  updateUserProfile(userId: string, data: { email?: string; name?: string }): Promise<{ user: User }>;
+  changePassword(current: string, next: string): Promise<void>;
+
+  // Blogs
+  listBlogs(params: Parameters<typeof mockApi.listBlogs>[0]): Promise<Paginated<Blog>>;
+  getBlog(slug: string): Promise<Blog>;
+  getBlogById(id: string): Promise<Blog>;
+  myBlogs(): Promise<Paginated<Blog>>;
+  createBlog(input: Parameters<typeof mockApi.createBlog>[1]): Promise<Blog>;
+  updateBlog(id: string, patch: Parameters<typeof mockApi.updateBlog>[2]): Promise<Blog>;
+  deleteBlog(id: string): Promise<void>;
+  categories(): Promise<Category[]>;
+  tags(): Promise<string[]>;
+  uploadImage(file: File): Promise<{ url: string }>;
+
+  // Admin
+  adminStats(): Promise<AdminStats>;
+  adminAuthors(search?: string): Promise<User[]>;
+  adminToggleSuspend(userId: string): Promise<User>;
+  adminBlogs(params: { search?: string; category?: string; page?: number }): Promise<Paginated<Blog>>;
+}
+
+export const api: Api = {
   // ---- Auth
   async login(email: string, password: string): Promise<{ token: string; user: User }> {
     if (USE_MOCK) return mockApi.login(email, password);
@@ -59,15 +88,18 @@ export const api = {
     if (USE_MOCK) return mockApi.me(t);
     return http("/auth/me");
   },
-  async updateProfile(patch: { email?: string; name?: string }): Promise<{ user: User }> {
-    const t = getToken()!;
-    if (USE_MOCK) return mockApi.updateProfile(t, patch);
-    return http("/auth/profile", { method: "PATCH", body: JSON.stringify(patch) });
+  async logout(): Promise<void> {
+    if (USE_MOCK) { await mockApi.logout(); return; }
+    await http("/auth/logout", { method: "POST" });
   },
-  async changePassword(current: string, next: string) {
+  async updateUserProfile(userId: string, data: { email?: string; name?: string }): Promise<{ user: User }> {
+    if (USE_MOCK) return mockApi.updateProfile(userId, data);
+    return http(`/auth/profile/${userId}`, { method: "PUT", body: JSON.stringify(data) });
+  },
+  async changePassword(current: string, next: string): Promise<void> {
     const t = getToken()!;
-    if (USE_MOCK) return mockApi.changePassword(t, current, next);
-    return http("/auth/change-password", { method: "POST", body: JSON.stringify({ current, next }) });
+    if (USE_MOCK) { await mockApi.changePassword(t, current, next); return; }
+    await http("/auth/change-password", { method: "POST", body: JSON.stringify({ current, next }) });
   },
 
   // ---- Blogs
@@ -100,10 +132,10 @@ export const api = {
     if (USE_MOCK) return mockApi.updateBlog(t, id, patch);
     return http(`/blogs/${id}`, { method: "PATCH", body: JSON.stringify(patch) });
   },
-  async deleteBlog(id: string) {
+  async deleteBlog(id: string): Promise<void> {
     const t = getToken()!;
-    if (USE_MOCK) return mockApi.deleteBlog(t, id);
-    return http(`/blogs/${id}`, { method: "DELETE" });
+    if (USE_MOCK) { await mockApi.deleteBlog(t, id); return; }
+    await http(`/blogs/${id}`, { method: "DELETE" });
   },
   async categories(): Promise<Category[]> {
     if (USE_MOCK) return mockApi.categories();
