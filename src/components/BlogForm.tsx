@@ -11,10 +11,11 @@ export interface BlogFormValue {
   title: string;
   content: string;
   excerpt: string;
-  coverImage?: string;
+  coverImage?: File; // file to upload
   categoryId: string;
   tags: string[];
   published: boolean;
+  scheduledAt?: string | null; // ISO string
 }
 
 export function BlogForm({
@@ -28,17 +29,37 @@ export function BlogForm({
   onSubmit: (v: BlogFormValue) => void;
   onDelete?: () => void;
 }) {
-  const { data: categories } = useQuery({ queryKey: ["categories"], queryFn: () => api.categories() });
+  // Hardcoded categories based on backend enum BlogCategory
+  const categories = [
+    { id: "ENTERTAINMENT", name: "Entertainment" },
+    { id: "SPORTS", name: "Sports" },
+    { id: "TRANSPORT", name: "Transport" },
+    { id: "TECHNOLOGY", name: "Technology" },
+    { id: "BUSINESS", name: "Business" },
+    { id: "EDUCATION", name: "Education" },
+  ];
 
   const [title, setTitle] = useState(initial?.title || "");
   const [excerpt, setExcerpt] = useState(initial?.excerpt || "");
   const [content, setContent] = useState(initial?.content || "");
   const [coverImage, setCoverImage] = useState<string | undefined>(initial?.coverImage);
+  const [coverImageFile, setCoverImageFile] = useState<File | undefined>(undefined);
   const [categoryId, setCategoryId] = useState(initial?.categoryId || initial?.category?.id || "");
   const [tags, setTags] = useState<string[]>(initial?.tags || []);
   const [tagInput, setTagInput] = useState("");
   const [preview, setPreview] = useState(false);
   const [error, setError] = useState("");
+  const toLocalDatetime = (iso?: string) => {
+    if (!iso) return undefined
+    const d = new Date(iso)
+    const offset = d.getTimezoneOffset()
+    const local = new Date(d.getTime() - offset * 60000)
+    return local.toISOString().slice(0, 16)
+  }
+  const [scheduledAt, setScheduledAt] = useState<string | undefined>(() => {
+    const init = (initial as any)?.scheduledAt
+    return toLocalDatetime(init)
+  })
 
   const addTag = () => {
     const t = tagInput.trim().toLowerCase().replace(/[^a-z0-9-]/g, "");
@@ -54,7 +75,17 @@ export function BlogForm({
     if (!title.trim()) return setError("Title is required");
     if (!content || content === "<p></p>") return setError("Content is required");
     if (!categoryId) return setError("Pick a category");
-    onSubmit({ title: title.trim(), content, excerpt, coverImage, categoryId, tags, published });
+    const payload = {
+      title: title.trim(),
+      content,
+      excerpt,
+      coverImage: coverImageFile,
+      categoryId,
+      tags,
+      published,
+      scheduledAt: scheduledAt ? new Date(scheduledAt).toISOString() : undefined,
+    }
+    onSubmit(payload as BlogFormValue)
   };
 
   return (
@@ -92,7 +123,7 @@ export function BlogForm({
 
           <div>
             <label className="mb-1 block text-xs font-bold uppercase tracking-wider">Cover image</label>
-            <ImageUpload value={coverImage} onChange={setCoverImage} />
+            <ImageUpload value={coverImage} onChange={setCoverImage} onFileChange={setCoverImageFile} />
           </div>
 
           <div>

@@ -1,14 +1,18 @@
 import { useCallback, useState } from "react";
 import { Upload, X } from "lucide-react";
-import { api } from "@/lib/api/client";
 import { Spinner } from "./Spinner";
 
 export function ImageUpload({
   value,
   onChange,
+  onFileChange,
 }: {
+  /** Preview URL */
   value?: string;
+  /** Called with the preview URL */
   onChange: (url: string | undefined) => void;
+  /** Called with the original File (or undefined when removed) */
+  onFileChange?: (file: File | undefined) => void;
 }) {
   const [uploading, setUploading] = useState(false);
   const [drag, setDrag] = useState(false);
@@ -17,13 +21,14 @@ export function ImageUpload({
     async (file: File) => {
       setUploading(true);
       try {
-        const { url } = await api.uploadImage(file);
-        onChange(url);
+        const previewUrl = URL.createObjectURL(file);
+        onChange(previewUrl);
+        onFileChange?.(file);
       } finally {
         setUploading(false);
       }
     },
-    [onChange],
+    [onChange, onFileChange]
   );
 
   if (value) {
@@ -32,7 +37,10 @@ export function ImageUpload({
         <img src={value} alt="" className="aspect-[16/9] w-full object-cover" />
         <button
           type="button"
-          onClick={() => onChange(undefined)}
+          onClick={() => {
+            onChange(undefined);
+            onFileChange?.(undefined);
+          }}
           className="absolute right-2 top-2 inline-flex h-8 w-8 items-center justify-center border-2 border-border bg-background"
           aria-label="Remove image"
         >
