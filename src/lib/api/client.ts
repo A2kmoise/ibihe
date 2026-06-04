@@ -24,26 +24,39 @@ export function clearToken() {
 
 async function http<T>(path: string, opts: RequestInit = {}): Promise<T> {
   const token = getToken();
-  const res = await fetch(BASE + path, {
-    ...opts,
-    headers: {
-      "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      ...(opts.headers || {}),
-    },
-  });
-  if (!res.ok) {
-    let msg = res.statusText;
-    try {
-      const j = await res.json();
-      msg = j.message || j.error || msg;
-    } catch { }
-    throw new Error(msg);
+  try {
+    const isFormData = opts.body instanceof FormData;
+    const headers: Record<string, string> = {};
+    if (!isFormData) {
+      headers["Content-Type"] = "application/json";
+    }
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+    if (opts.headers) {
+      Object.assign(headers, opts.headers as Record<string, string>);
+    }
+
+    const res = await fetch(BASE + path, {
+      ...opts,
+      headers,
+    });
+
+    if (!res.ok) {
+      let msg = res.statusText;
+      try {
+        const j = await res.json();
+        msg = j.message || j.error || msg;
+      } catch {}
+      throw new Error(msg);
+    }
+    return res.json() as Promise<T>;
+  } catch (e) {
+    console.error("Network error while calling", BASE + path, e);
+    throw new Error("Unable to connect to API server. Ensure the backend is running.");
   }
-  return res.json() as Promise<T>;
 }
 
-// Explicit API typing
 interface Api {
   // Auth
   login(email: string, password: string): Promise<{ token: string; user: User }>;
@@ -58,7 +71,7 @@ interface Api {
   getBlog(slug: string): Promise<Blog>;
   getBlogById(id: string): Promise<Blog>;
   myBlogs(): Promise<Paginated<Blog>>;
-  createBlog(input: Parameters<typeof mockApi.createBlog>[1]): Promise<Blog>;
+  createBlog(input: any): Promise<Blog>;
   updateBlog(id: string, patch: Parameters<typeof mockApi.updateBlog>[2]): Promise<Blog>;
   deleteBlog(id: string): Promise<void>;
   categories(): Promise<Category[]>;
@@ -74,108 +87,183 @@ interface Api {
 
 export const api: Api = {
   // ---- Auth
-  async login(email: string, password: string): Promise<{ token: string; user: User }> {
+  async login(email: string, password: string) {
     if (USE_MOCK) return mockApi.login(email, password);
-    return http("/auth/login", { method: "POST", body: JSON.stringify({ email, password }) });
+    return http("/api/auth/login", { method: "POST", body: JSON.stringify({ email, password }) });
   },
-  async register(email: string, password: string, name: string): Promise<{ user: User }> {
+
+  async register(email: string, password: string, name: string) {
     if (USE_MOCK) return mockApi.register(email, password, name);
-    return http("/auth/register", { method: "POST", body: JSON.stringify({ email, password, name }) });
+    return http("/api/auth/register", {
+      method: "POST",
+      body: JSON.stringify({ email, password, username: name }),
+    });
   },
-  async me(): Promise<{ user: User }> {
+
+  async me() {
     const t = getToken();
     if (!t) throw new Error("Unauthorized");
     if (USE_MOCK) return mockApi.me(t);
-    return http("/auth/me");
+    return http("/api/auth/me");
   },
-  async logout(): Promise<void> {
+
+  async logout() {
     if (USE_MOCK) { await mockApi.logout(); return; }
-    await http("/auth/logout", { method: "POST" });
+    await http("/api/auth/logout", { method: "POST" });
   },
-  async updateUserProfile(userId: string, data: { email?: string; name?: string }): Promise<{ user: User }> {
+
+  async updateUserProfile(userId: string, data: { email?: string; name?: string }) {
     if (USE_MOCK) return mockApi.updateProfile(userId, data);
-    return http(`/auth/profile/${userId}`, { method: "PUT", body: JSON.stringify(data) });
+    return http(`/api/auth/profile/${userId}`, {
+      method: "PUT",
+      body: JSON.stringify(data),
+    });
   },
-  async changePassword(current: string, next: string): Promise<void> {
+
+  async changePassword(current: string, next: string) {
     const t = getToken()!;
     if (USE_MOCK) { await mockApi.changePassword(t, current, next); return; }
-    await http("/auth/change-password", { method: "POST", body: JSON.stringify({ current, next }) });
+    await http("/api/auth/change-password", {
+      method: "POST",
+      body: JSON.stringify({ current, next }),
+    });
   },
 
   // ---- Blogs
-  async listBlogs(params: Parameters<typeof mockApi.listBlogs>[0]): Promise<Paginated<Blog>> {
+  async listBlogs(params) {
     if (USE_MOCK) return mockApi.listBlogs(params);
     const q = new URLSearchParams();
-    Object.entries(params).forEach(([k, v]) => v != null && q.set(k, String(v)));
-    return http(`/blogs?${q.toString()}`);
+    if (params.page !== undefined) q.set("page", String(params.page));
+    if (params.pageSize !== undefined) q.set("limit", String(params.pageSize));
+    if (params.limit !== undefined) q.set("limit", String(params.limit));
+    Object.entries(params).forEach(([k, v]) => {
+      if (v != null && !["page", "pageSize", "limit"].includes(k)) {
+        const val =
+          k === "sort" && typeof v === "string" && v.includes(":")
+            ? v.split(":")[0]
+            : v;
+        q.set(k, String(val));
+      }
+    });
+    return http(`/api/blogs?${q.toString()}`);
   },
-  async getBlog(slug: string): Promise<Blog> {
+
+  async getBlog(slug: string) {
     if (USE_MOCK) return mockApi.getBlog(slug);
-    return http(`/blogs/${slug}`);
+    return http(`/api/blogs/${slug}`);
   },
-  async getBlogById(id: string): Promise<Blog> {
+
+  async getBlogById(id: string) {
     if (USE_MOCK) return mockApi.getBlogById(id);
-    return http(`/blogs/id/${id}`);
+    return http(`/api/blogs/id/${id}`);
   },
-  async myBlogs(): Promise<Paginated<Blog>> {
-    const t = getToken()!;
-    if (USE_MOCK) return mockApi.myBlogs(t);
-    return http(`/blogs/mine`);
+
+  async myBlogs() {
+    if (USE_MOCK) return mockApi.myBlogs(getToken()!);
+    return http(`/api/blogs/mine`);
   },
-  async createBlog(input: Parameters<typeof mockApi.createBlog>[1]): Promise<Blog> {
-    const t = getToken()!;
-    if (USE_MOCK) return mockApi.createBlog(t, input);
-    return http(`/blogs`, { method: "POST", body: JSON.stringify(input) });
+
+  async createBlog(input: any) {
+    if (USE_MOCK) {
+      const t = getToken()!;
+      return mockApi.createBlog(t, input);
+    }
+
+    if (input.coverImage && input.coverImage instanceof File) {
+      const form = new FormData();
+      form.append("title", input.title);
+      form.append("content", input.content);
+      form.append("category", input.categoryId.toUpperCase());
+      if (input.tags?.length) {
+        form.append("tags", input.tags.join(","));
+      }
+      form.append("image", input.coverImage);
+      if (input.excerpt) form.append("excerpt", input.excerpt);
+      form.append("published", String(!!input.published));
+      form.append("scheduledAt", input.scheduledAt || "");
+
+      const token = getToken();
+      const res = await fetch(BASE + "/api/blogs", {
+        method: "POST",
+        body: form,
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      });
+      if (!res.ok) throw new Error("Create blog failed");
+      return res.json();
+    }
+
+    return http("/api/blogs", { method: "POST", body: JSON.stringify(input) });
   },
-  async updateBlog(id: string, patch: Parameters<typeof mockApi.updateBlog>[2]): Promise<Blog> {
-    const t = getToken()!;
-    if (USE_MOCK) return mockApi.updateBlog(t, id, patch);
-    return http(`/blogs/${id}`, { method: "PATCH", body: JSON.stringify(patch) });
+
+  async updateBlog(id: string, data: any) {
+    if (USE_MOCK) return mockApi.updateBlog(getToken()!, id, data);
+
+    // No image upload on edit — send plain JSON
+    const payload: Record<string, any> = {};
+    Object.entries(data).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && !(value instanceof File)) {
+        payload[key] = value;
+      }
+    });
+
+    return http(`/api/blogs/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify(payload),
+    });
   },
-  async deleteBlog(id: string): Promise<void> {
+
+  async deleteBlog(id: string) {
     const t = getToken()!;
     if (USE_MOCK) { await mockApi.deleteBlog(t, id); return; }
-    await http(`/blogs/${id}`, { method: "DELETE" });
+    await http(`/api/blogs/${id}`, { method: "DELETE" });
   },
-  async categories(): Promise<Category[]> {
+
+  async categories() {
     if (USE_MOCK) return mockApi.categories();
-    return http(`/categories`);
+    return http(`/api/categories`);
   },
-  async tags(): Promise<string[]> {
+
+  async tags() {
     if (USE_MOCK) return mockApi.tags();
-    return http(`/tags`);
+    return http(`/api/tags`);
   },
-  async uploadImage(file: File): Promise<{ url: string }> {
+
+  async uploadImage(file: File) {
     if (USE_MOCK) return mockApi.uploadImage(file);
+    const CLOUDINARY_URL = (import.meta as any).env?.VITE_CLOUDINARY_URL;
+    const CLOUDINARY_PRESET = (import.meta as any).env?.VITE_CLOUDINARY_UPLOAD_PRESET;
+    if (!CLOUDINARY_URL) {
+      throw new Error("Cloudinary upload URL not configured");
+    }
     const form = new FormData();
     form.append("file", file);
-    const token = getToken();
-    const res = await fetch(BASE + "/uploads", {
-      method: "POST",
-      body: form,
-      headers: token ? { Authorization: `Bearer ${token}` } : {},
-    });
+    if (CLOUDINARY_PRESET) form.append("upload_preset", CLOUDINARY_PRESET);
+    const res = await fetch(CLOUDINARY_URL, { method: "POST", body: form });
     if (!res.ok) throw new Error("Upload failed");
-    return res.json();
+    const data = await res.json();
+    return { url: data.secure_url || data.url };
   },
 
   // ---- Admin
-  async adminStats(): Promise<AdminStats> {
+  async adminStats() {
     if (USE_MOCK) return mockApi.adminStats();
-    return http(`/admin/stats`);
+    return http(`/api/admin/stats`);
   },
-  async adminAuthors(search?: string): Promise<User[]> {
+
+  async adminAuthors(search?: string) {
     if (USE_MOCK) return mockApi.adminAuthors(search);
-    return http(`/admin/authors?search=${encodeURIComponent(search || "")}`);
+    return http(`/api/admin/authors?search=${encodeURIComponent(search || "")}`);
   },
-  async adminToggleSuspend(userId: string): Promise<User> {
+
+  async adminToggleSuspend(userId: string) {
     if (USE_MOCK) return mockApi.adminToggleSuspend(userId);
-    return http(`/admin/authors/${userId}/suspend`, { method: "PATCH" });
+    return http(`/api/admin/authors/${userId}/suspend`, { method: "PATCH" });
   },
-  async adminBlogs(params: { search?: string; category?: string; page?: number }): Promise<Paginated<Blog>> {
+
+  async adminBlogs(params) {
     if (USE_MOCK) return mockApi.adminBlogs(params);
     const q = new URLSearchParams();
     Object.entries(params).forEach(([k, v]) => v != null && q.set(k, String(v)));
-    return http(`/admin/blogs?${q.toString()}`);
+    return http(`/api/admin/blogs?${q.toString()}`);
   },
 };

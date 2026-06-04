@@ -132,6 +132,7 @@ export const mockApi = {
   async listBlogs(params: {
     page?: number;
     pageSize?: number;
+    limit?: number; // added to match client code
     search?: string;
     category?: string;
     tag?: string;
