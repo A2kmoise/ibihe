@@ -8,7 +8,7 @@ export default function LoginPage() {
   const { login } = useAuth()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
-  const redirect = searchParams.get('redirect') || '/dashboard/my-blogs'
+  const redirect = searchParams.get('redirect') || '/dashboard'
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -21,9 +21,13 @@ export default function LoginPage() {
     setError('')
     setLoading(true)
     try {
-      await login(email, password, remember)
+      const user = await login(email, password, remember)
       toast.success('Welcome back')
-      navigate(redirect)
+      if (user?.role === 'ADMIN') {
+        navigate('/admin')
+      } else {
+        navigate(redirect)
+      }
     } catch (err: any) {
       setError(err.message || 'Login failed')
     } finally {
@@ -173,12 +177,13 @@ export default function LoginPage() {
             </Link>
           </p>
 
-          <p className="mt-6 text-center text-xs text-muted-foreground">
+     {/* <p className="mt-6 text-center text-xs text-muted-foreground">
             Demo: <code className="rounded bg-muted px-2 py-1">admin@menya.com</code> or{' '}
             <code className="rounded bg-muted px-2 py-1">author@menya.com</code>
             <br />
             Password: <code className="rounded bg-muted px-2 py-1">password123</code>
-          </p>
+          </p>*/} 
+          
         </div>
       </div>
     </div>

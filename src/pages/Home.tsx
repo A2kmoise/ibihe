@@ -11,7 +11,7 @@ export default function HomePage() {
 
       {/* Hero Section */}
       <section className="border-b-2 border-border bg-gradient-to-b from-background to-accent">
-        <div className="mx-auto max-w-7xl px-4 py-20 md:py-32">
+        <div className="mx-auto max-w-7xl px-4 py-20 md:py-32 mt-8">
           <div className="text-center">
             <div className="mb-6 inline-block border-2 border-border bg-primary px-4 py-2 text-xs font-bold uppercase tracking-widest text-primary-foreground">
               Welcome to menya

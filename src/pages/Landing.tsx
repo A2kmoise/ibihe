@@ -31,7 +31,7 @@ const mockAds = [
     id: 3,
     title: 'SEO Tools',
     description: 'Boost your blog traffic by 300%',
-    image: 'https://images.unsplash.com/photo-1432888622747-4eb9a8f2c293?w=400&h=200&fit=crop',
+    image: 'https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=400&h=200&fit=crop',
     link: '#'
   }
 ]
@@ -58,8 +58,10 @@ export default function LandingPage() {
   const carouselBlogs = carouselData?.items || []
 
   // Split the blogs: first 5 for Latest, last 5 for Featured
-  const latestBlogs = allBlogs?.items.slice(0, 5) || []
-  const featuredBlogs = allBlogs?.items.slice(5, 10) || []
+  const latestBlogs = allBlogs?.items.slice(0, 10) || []
+  // split into two columns for left/right layout
+  const leftBlogs = latestBlogs.slice(0, Math.ceil(latestBlogs.length / 2))
+  const rightBlogs = latestBlogs.slice(Math.ceil(latestBlogs.length / 2))
 
   const totalPages = Math.ceil((allBlogs?.total || 0) / 10)
 
@@ -168,7 +170,7 @@ export default function LandingPage() {
 
 
       {/* Filters Section */}
-      <section className="border-b border-border bg-background">
+      <section className="border-b border-border bg-background mt-8">
         <div className="mx-auto max-w-7xl px-4 py-6">
           {/* All Filters in One Row */}
           <div className="flex flex-wrap items-center justify-between gap-4">
@@ -255,11 +257,11 @@ export default function LandingPage() {
       {/* Main Content Section */}
       <section ref={blogSectionRef} className="mx-auto max-w-7xl px-4 py-12">
         <div className="grid gap-8 lg:grid-cols-3">
-          {/* Latest News */}
+          {/* Left Column Blogs */}
           <div className="lg:col-span-1">
             <h2 className="mb-6 text-2xl font-bold text-primary">📰 Latest News</h2>
             <div className="space-y-6">
-              {latestBlogs.map((blog: Blog) => (
+              {leftBlogs.map((blog: Blog) => (
                 <Link
                   key={blog.id}
                   to={`/blogs/${blog.slug}`}
@@ -289,11 +291,11 @@ export default function LandingPage() {
             </div>
           </div>
 
-          {/* Featured News */}
+          {/* Right Column Blogs */}
           <div className="lg:col-span-1">
-            <h2 className="mb-6 text-2xl font-bold text-primary">⭐ Featured News</h2>
+            <h2 className="mb-6 text-2xl font-bold text-primary">📰 Latest News</h2>
             <div className="space-y-6">
-              {featuredBlogs.map((blog: Blog) => (
+              {rightBlogs.map((blog: Blog) => (
                 <Link
                   key={blog.id}
                   to={`/blogs/${blog.slug}`}
