@@ -10,10 +10,11 @@ export default function AdminBlogs() {
   const [search, setSearch] = useState('')
   const [category, setCategory] = useState('')
   const [page, setPage] = useState(1)
+  const [pageSize, setPageSize] = useState(20)
 
   const { data: blogs, isLoading } = useQuery({
-    queryKey: ['admin-blogs', search, category, page],
-    queryFn: () => api.adminBlogs({ search, category, page }),
+    queryKey: ['admin-blogs', search, category, page, pageSize],
+    queryFn: () => api.adminBlogs({ search, category, page, pageSize } as any),
   })
 
   const { data: categories } = useQuery({
@@ -44,6 +45,22 @@ export default function AdminBlogs() {
             <option key={c.id} value={c.slug}>{c.name}</option>
           ))}
         </select>
+        <select
+          value={pageSize}
+          onChange={(e) => { setPageSize(Number(e.target.value)); setPage(1) }}
+          className="h-11 border-2 border-border bg-background px-3 text-sm font-medium outline-none focus:border-primary"
+        >
+          <option value={10}>10</option>
+          <option value={20}>20</option>
+          <option value={50}>50</option>
+          <option value={100}>100</option>
+        </select>
+        <button
+          onClick={() => { setPageSize(blogs?.total ?? 1000); setPage(1) }}
+          className="h-11 rounded-xl border-2 border-border bg-background px-4 text-sm font-bold hover:bg-accent"
+        >
+          Show all
+        </button>
       </div>
 
       {isLoading ? (
@@ -93,11 +110,11 @@ export default function AdminBlogs() {
             ))}
           </div>
 
-          {blogs.total > 10 && (
+          {blogs.total > pageSize && (
             <div className="mt-8">
               <Pagination
                 page={page}
-                pageSize={10}
+                pageSize={pageSize}
                 total={blogs.total}
                 onChange={setPage}
               />
