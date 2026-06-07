@@ -60,6 +60,7 @@ export function BlogForm({
     const init = (initial as any)?.scheduledAt
     return toLocalDatetime(init)
   })
+  const [isScheduled, setIsScheduled] = useState<boolean>(() => !!scheduledAt)
 
   const addTag = () => {
     const t = tagInput.trim().toLowerCase().replace(/[^a-z0-9-]/g, "");
@@ -83,7 +84,7 @@ export function BlogForm({
       categoryId,
       tags,
       published,
-      scheduledAt: scheduledAt ? new Date(scheduledAt).toISOString() : undefined,
+      scheduledAt: isScheduled && scheduledAt ? new Date(scheduledAt).toISOString() : undefined,
     }
     onSubmit(payload as BlogFormValue)
   };
@@ -186,13 +187,38 @@ export function BlogForm({
       )}
 
       <div className="mt-8 flex flex-wrap items-center justify-between gap-3 border-t-2 border-border pt-6">
-        <div className="flex gap-2">
-          <Button onClick={() => handle(false)} disabled={submitting} variant="outline" className="border-2 border-border font-bold">
-            Save as draft
-          </Button>
-          <Button onClick={() => handle(true)} disabled={submitting} className="border-2 border-border bg-primary font-bold text-primary-foreground hover:bg-primary/90">
-            {submitting ? "Saving…" : "Publish"}
-          </Button>
+        <div className="flex items-center gap-4">
+          <label className="flex items-center gap-2 text-sm">
+            <input
+              type="checkbox"
+              checked={isScheduled}
+              onChange={(e) => {
+                const checked = e.target.checked
+                setIsScheduled(checked)
+                if (!checked) setScheduledAt(undefined)
+              }}
+              className="h-4 w-4 rounded accent-primary"
+            />
+            <span className="font-medium">Schedule post</span>
+          </label>
+
+          {isScheduled && (
+            <input
+              type="datetime-local"
+              value={scheduledAt || ""}
+              onChange={(e) => setScheduledAt(e.target.value)}
+              className="h-11 w-[220px] rounded border-2 border-border bg-background px-3 text-sm outline-none focus:border-primary"
+            />
+          )}
+
+          <div className="flex gap-2">
+            <Button onClick={() => handle(false)} disabled={submitting} variant="outline" className="border-2 border-border font-bold">
+              Save as draft
+            </Button>
+            <Button onClick={() => handle(true)} disabled={submitting} className="border-2 border-border bg-primary font-bold text-primary-foreground hover:bg-primary/90">
+              {submitting ? "Saving…" : "Publish"}
+            </Button>
+          </div>
         </div>
         {onDelete && (
           <Button variant="ghost" onClick={onDelete} className="text-destructive hover:bg-destructive/10">
