@@ -82,11 +82,15 @@ export default function MyBlogs() {
                     <h3 className="text-xl font-bold leading-tight group-hover:text-primary">
                       {blog.title}
                     </h3>
-                    {!blog.published && (
+                    {!blog.published && blog.scheduledAt ? (
+                      <span className="rounded-full bg-blue-100 text-blue-800 px-3 py-1 text-xs font-bold dark:bg-blue-900/30 dark:text-blue-400">
+                        Scheduled: {format(new Date(blog.scheduledAt), "MMM d, yyyy HH:mm")}
+                      </span>
+                    ) : !blog.published ? (
                       <span className="rounded-full bg-muted px-3 py-1 text-xs font-bold text-muted-foreground">
                         Draft
                       </span>
-                    )}
+                    ) : null}
                   </div>
                   <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">{blog.excerpt}</p>
 
