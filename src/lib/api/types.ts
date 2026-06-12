@@ -29,6 +29,7 @@ export interface Blog {
   updatedAt: string;
   views?: number;
   published?: boolean;
+  scheduledAt?: string;
 }
 
 export interface Paginated<T> {

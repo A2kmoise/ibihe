@@ -169,42 +169,62 @@ export const api: Api = {
       return mockApi.createBlog(t, input);
     }
 
-    if (input.coverImage && input.coverImage instanceof File) {
-      const form = new FormData();
-      form.append("title", input.title);
-      form.append("content", input.content);
-      form.append("category", input.categoryId.toUpperCase());
-      if (input.tags?.length) {
-        form.append("tags", input.tags.join(","));
-      }
+    const form = new FormData();
+    form.append("title", input.title || "");
+    form.append("content", input.content || "");
+    form.append("category", (input.categoryId || "").toUpperCase());
+    if (input.tags?.length) {
+      form.append("tags", input.tags.join(","));
+    }
+    if (input.coverImage instanceof File) {
       form.append("image", input.coverImage);
-      if (input.excerpt) form.append("excerpt", input.excerpt);
-      form.append("published", String(!!input.published));
-      form.append("scheduledAt", input.scheduledAt || "");
-
-      const token = getToken();
-      const res = await fetch(BASE + "/api/blogs", {
-        method: "POST",
-        body: form,
-        headers: token ? { Authorization: `Bearer ${token}` } : {},
-      });
-      if (!res.ok) throw new Error("Create blog failed");
-      return res.json();
+    }
+    if (input.excerpt) {
+      form.append("excerpt", input.excerpt);
+    }
+    form.append("published", String(!!input.published));
+    if (input.scheduledAt) {
+      form.append("scheduledAt", input.scheduledAt);
     }
 
-    return http("/api/blogs", { method: "POST", body: JSON.stringify(input) });
+    const token = getToken();
+    const res = await fetch(BASE + "/api/blogs", {
+      method: "POST",
+      body: form,
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    });
+    if (!res.ok) {
+      let msg = "Create blog failed";
+      try {
+        const j = await res.json();
+        msg = j.message || j.error || msg;
+      } catch {}
+      throw new Error(msg);
+    }
+    return res.json();
   },
 
   async updateBlog(id: string, data: any) {
     if (USE_MOCK) return mockApi.updateBlog(getToken()!, id, data);
 
-    // No image upload on edit — send plain JSON
+    let coverImageUrl = data.coverImage;
+    if (data.coverImage instanceof File) {
+      const uploadRes = await api.uploadImage(data.coverImage);
+      coverImageUrl = uploadRes.url;
+    }
+
     const payload: Record<string, any> = {};
     Object.entries(data).forEach(([key, value]) => {
       if (value !== undefined && value !== null && !(value instanceof File)) {
         payload[key] = value;
       }
     });
+
+    if (coverImageUrl && typeof coverImageUrl === "string") {
+      payload.coverImage = coverImageUrl;
+    } else if (coverImageUrl === null || coverImageUrl === "") {
+      payload.coverImage = "";
+    }
 
     return http(`/api/blogs/${id}`, {
       method: "PATCH",
