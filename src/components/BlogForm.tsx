@@ -84,7 +84,7 @@ export function BlogForm({
       categoryId,
       tags,
       published,
-      scheduledAt: isScheduled && scheduledAt ? new Date(scheduledAt).toISOString() : undefined,
+      scheduledAt: isScheduled && scheduledAt ? new Date(scheduledAt).toISOString() : "",
     }
     onSubmit(payload as BlogFormValue)
   };
