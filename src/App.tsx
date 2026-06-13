@@ -12,6 +12,7 @@ import AboutPage from './pages/About'
 import BlogDetailPage from './pages/BlogDetail'
 import CategoryPage from './pages/Category'
 import TagPage from './pages/Tag'
+import ForgotPasswordPage from './pages/ForgotPassword'
 
 // Dashboard
 import DashboardLayout from './pages/dashboard/Layout'
@@ -71,6 +72,7 @@ export default function App() {
           <Route path="/" element={<MainPage />} />
           <Route path="/home" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/blogs/:slug" element={<BlogDetailPage />} />
