@@ -52,61 +52,68 @@ export default function ForgotPassword() {
   }
 
   return (
-    <div className="mx-auto max-w-md p-6">
-      <h1 className="text-2xl font-black">Forgot Password</h1>
-      <p className="mt-2 text-sm text-muted-foreground">Enter your account email to receive a one-time code to reset your password.</p>
-
-      {step === 'email' && (
-        <div className="mt-6 space-y-4">
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="you@email.com"
-            className="w-full rounded border-2 border-border bg-background px-3 py-2 outline-none focus:border-primary"
-          />
-          <div className="flex items-center justify-between">
-            <Button onClick={sendOtp} className="bg-primary text-primary-foreground">Send OTP</Button>
-            <Link to="/login" className="text-sm font-medium text-primary hover:underline">Back to login</Link>
-          </div>
+    <div className="min-h-screen flex items-center justify-center bg-background">
+      <div className="w-full max-w-lg p-10 rounded-2xl glass shadow-modern-lg">
+        <div className="text-center">
+          <h1 className="text-4xl font-extrabold">Forgot Password</h1>
+          <p className="mt-2 text-sm text-muted-foreground max-w-prose mx-auto">Enter your account email and we'll send a one-time code to reset your password.</p>
         </div>
-      )}
 
-      {step === 'otp' && (
-        <div className="mt-6">
-          <p className="text-sm text-muted-foreground">Enter the 6-digit code sent to <strong>{email}</strong></p>
-
-          <div className="mt-4 flex gap-2">
-            {otp.map((v, i) => (
+        <div className="mt-8">
+          {step === 'email' && (
+            <div className="space-y-6">
               <input
-                key={i}
-                ref={(el) => (inputsRef.current[i] = el)}
-                inputMode="numeric"
-                pattern="[0-9]*"
-                maxLength={1}
-                value={v}
-                onChange={(e) => handleOtpChange(i, e.target.value.replace(/\s/g, ''))}
-                onKeyDown={(e) => handleKeyDown(e, i)}
-                className="h-12 w-12 text-center rounded border-2 border-border bg-background text-lg font-bold outline-none focus:border-primary"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@email.com"
+                className="w-full rounded-xl border-2 border-border bg-background px-4 py-4 text-lg font-medium outline-none focus:border-primary"
               />
-            ))}
-          </div>
 
-          <div className="mt-4 flex items-center gap-3">
-            <Button onClick={verifyOtp} className="bg-primary text-primary-foreground">Verify code</Button>
-            <button onClick={resend} className="text-sm text-muted-foreground hover:underline">Resend</button>
-          </div>
-        </div>
-      )}
+              <div className="flex items-center justify-between">
+                <Button onClick={sendOtp} className="h-12 px-6 rounded-xl bg-primary text-primary-foreground font-bold">Send OTP</Button>
+                <Link to="/login" className="text-sm font-medium text-primary hover:underline">Back to login</Link>
+              </div>
+            </div>
+          )}
 
-      {step === 'success' && (
-        <div className="mt-6 space-y-4">
-          <p className="text-sm">Code verified. You can now reset your password.</p>
-          <Link to="/login" className="inline-block">
-            <Button className="bg-primary text-primary-foreground">Back to login</Button>
-          </Link>
+          {step === 'otp' && (
+            <div className="space-y-6 text-center">
+              <p className="text-sm text-muted-foreground">Enter the 6-digit code sent to <strong>{email}</strong></p>
+
+              <div className="mt-4 flex justify-center gap-3">
+                {otp.map((v, i) => (
+                  <input
+                    key={i}
+                    ref={(el) => (inputsRef.current[i] = el)}
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    maxLength={1}
+                    value={v}
+                    onChange={(e) => handleOtpChange(i, e.target.value.replace(/\s/g, ''))}
+                    onKeyDown={(e) => handleKeyDown(e, i)}
+                    className="h-14 w-14 text-center rounded-lg border-2 border-border bg-background text-2xl font-extrabold outline-none focus:border-primary"
+                  />
+                ))}
+              </div>
+
+              <div className="mt-4 flex items-center justify-center gap-4">
+                <Button onClick={verifyOtp} className="h-12 px-6 rounded-xl bg-primary text-primary-foreground font-bold">Verify code</Button>
+                <button onClick={resend} className="text-sm text-muted-foreground hover:underline">Resend</button>
+              </div>
+            </div>
+          )}
+
+          {step === 'success' && (
+            <div className="space-y-4 text-center">
+              <p className="text-sm">Code verified. You can now reset your password.</p>
+              <Link to="/login" className="inline-block">
+                <Button className="h-12 px-6 rounded-xl bg-primary text-primary-foreground font-bold">Back to login</Button>
+              </Link>
+            </div>
+          )}
         </div>
-      )}
+      </div>
     </div>
   )
 }
