@@ -60,7 +60,7 @@ function AdminRoute({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   const location = useLocation()
-  const hideFooter = ['/login', '/register'].includes(location.pathname) ||
+  const hideFooter = ['/login', '/register', '/forgot-password'].includes(location.pathname) ||
     location.pathname.startsWith('/admin') ||
     location.pathname.startsWith('/dashboard')
 
