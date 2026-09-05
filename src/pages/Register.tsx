@@ -16,13 +16,23 @@ export default function RegisterPage() {
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault()
     setError('')
+
+    // Validate and clean the name
+    const cleanName = name.trim().replace(/\s+/g, ' ')
+
+    if (!cleanName) {
+      setError('Name is required')
+      return
+    }
+
     if (password.length < 8) {
       setError('Password must be at least 8 characters')
       return
     }
+
     setLoading(true)
     try {
-      await register(email, password, name)
+      await register(email, password, cleanName)
       toast.success('Account created — please log in')
       navigate('/login')
     } catch (err: any) {
@@ -100,6 +110,7 @@ export default function RegisterPage() {
                 placeholder="Your full name"
                 className="h-12 w-full rounded-xl border-2 border-border bg-background px-4 text-sm font-medium outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
               />
+              <p className="mt-2 text-xs text-muted-foreground">Name doesn't contain special characters, numbers or spaces</p>
             </div>
 
             <div>
