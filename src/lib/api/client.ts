@@ -47,7 +47,7 @@ async function http<T>(path: string, opts: RequestInit = {}): Promise<T> {
       try {
         const j = await res.json();
         msg = j.message || j.error || msg;
-      } catch {}
+      } catch { }
       throw new Error(msg);
     }
     return res.json() as Promise<T>;
@@ -94,9 +94,18 @@ export const api: Api = {
 
   async register(email: string, password: string, name: string) {
     if (USE_MOCK) return mockApi.register(email, password, name);
+
+    // Ensure name is properly trimmed and encoded
+    const cleanName = name.trim().replace(/\s+/g, ' ')
+
     return http("/api/auth/register", {
       method: "POST",
-      body: JSON.stringify({ email, password, username: name }),
+      body: JSON.stringify({
+        email: email.trim(),
+        password,
+        username: cleanName,
+        name: cleanName // Send both fields in case backend expects 'name' instead of 'username'
+      }),
     });
   },
 
@@ -114,9 +123,23 @@ export const api: Api = {
 
   async updateUserProfile(userId: string, data: { email?: string; name?: string }) {
     if (USE_MOCK) return mockApi.updateProfile(userId, data);
+
+    // Clean the data before sending
+    const cleanData: { email?: string; name?: string; username?: string } = {}
+
+    if (data.email) {
+      cleanData.email = data.email.trim()
+    }
+
+    if (data.name) {
+      const cleanName = data.name.trim().replace(/\s+/g, ' ')
+      cleanData.name = cleanName
+      cleanData.username = cleanName // Send both fields in case backend expects 'username'
+    }
+
     return http(`/api/auth/profile/${userId}`, {
       method: "PUT",
-      body: JSON.stringify(data),
+      body: JSON.stringify(cleanData),
     });
   },
 
@@ -198,7 +221,7 @@ export const api: Api = {
       try {
         const j = await res.json();
         msg = j.message || j.error || msg;
-      } catch {}
+      } catch { }
       throw new Error(msg);
     }
     return res.json();
