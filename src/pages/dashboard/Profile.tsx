@@ -15,9 +15,19 @@ export default function ProfilePage() {
 
   const saveProfile = async (e: FormEvent) => {
     e.preventDefault()
+
+    // Validate and clean the name
+    const cleanName = name.trim().replace(/\s+/g, ' ')
+    const cleanEmail = email.trim()
+
+    if (!cleanName) {
+      toast.error('Name is required')
+      return
+    }
+
     setSavingProfile(true)
     try {
-      await updateProfile(name, email)
+      await updateProfile(cleanName, cleanEmail)
       await refresh()
       toast.success('Profile updated')
     } catch (e: any) {
