@@ -2,6 +2,7 @@ import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { Toaster } from './components/ui/sonner'
 import { Footer } from './components/Footer'
 import { useAuth } from './lib/auth-context'
+import DashboardLoader from './components/DashboardLoader'
 
 // Pages
 import HomePage from './pages/Home'
@@ -33,7 +34,7 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, loading } = useAuth()
 
   if (loading) {
-    return <div className="flex min-h-screen items-center justify-center">Loading...</div>
+    return <DashboardLoader />
   }
 
   if (!isAuthenticated) {
@@ -48,7 +49,7 @@ function AdminRoute({ children }: { children: React.ReactNode }) {
   const { hasRole, loading } = useAuth()
 
   if (loading) {
-    return <div className="flex min-h-screen items-center justify-center">Loading...</div>
+    return <DashboardLoader />
   }
 
   if (!hasRole('ADMIN')) {
