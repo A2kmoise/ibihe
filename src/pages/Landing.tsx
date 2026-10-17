@@ -398,9 +398,6 @@ export default function LandingPage() {
             Join thousands of writers sharing their stories on menya
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-4">
-            <Button asChild size="lg" variant="outline" className="rounded-xl border-2 border-primary-foreground bg-background font-bold text-foreground shadow-modern transition-modern hover:scale-105">
-              <Link to="/register">Create Free Account</Link>
-            </Button>
             <Button asChild size="lg" className="rounded-xl border-2 border-primary-foreground/20 bg-primary-foreground font-bold text-primary shadow-modern transition-modern hover:scale-105  hover:text-white">
               <Link to="/home">Learn More</Link>
             </Button>
