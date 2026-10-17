@@ -33,9 +33,7 @@ export function Footer() {
           <h4 className="mb-3 text-sm font-bold uppercase tracking-wider">Connect</h4>
           <ul className="space-y-2 text-sm">
             <li><Link to="/home" className="hover:text-primary">menya</Link></li>
-            <li><a href="#" className="hover:text-primary">Twitter</a></li>
-            <li><a href="#" className="hover:text-primary">GitHub</a></li>
-            <li><a href="#" className="hover:text-primary">RSS</a></li>
+            <li><a href="#" className="hover:text-primary">x</a></li>
           </ul>
         </div>
       </div>
