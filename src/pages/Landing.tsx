@@ -393,7 +393,7 @@ export default function LandingPage() {
       {/* Call to Action */}
       <section className="border-t border-border bg-gradient-to-r from-primary via-primary to-emerald-600 py-16">
         <div className="mx-auto max-w-7xl px-4 text-center">
-          <h2 className="text-4xl font-bold text-primary-foreground">✨ Start Your Blogging Journey</h2>
+          <h2 className="text-4xl font-bold text-primary-foreground"> Start Your Blogging Journey</h2>
           <p className="mx-auto mt-4 max-w-2xl text-lg text-primary-foreground/90">
             Join thousands of writers sharing their stories on menya
           </p>
