@@ -36,7 +36,12 @@ export default function RegisterPage() {
       toast.success('Account created — please log in')
       navigate('/login')
     } catch (err: any) {
-      setError(err.message || 'Registration failed')
+      if (err.message === 'Email already registered') {
+        toast.success('Email already registered. Please log in.')
+        navigate('/login')
+      } else {
+        setError(err.message || 'Registration failed')
+      }
     } finally {
       setLoading(false)
     }
