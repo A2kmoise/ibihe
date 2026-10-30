@@ -31,7 +31,16 @@ export default function ProfilePage() {
       await refresh()
       toast.success('Profile updated')
     } catch (e: any) {
-      toast.error(e.message)
+      if (e.message === 'Network Error') {
+        toast.error('Can\'t respond', {
+          style: {
+            background: 'green',
+            color: 'white',
+          },
+        });
+      } else {
+        toast.error(e.message);
+      }
     } finally {
       setSavingProfile(false)
     }
@@ -45,7 +54,16 @@ export default function ProfilePage() {
       toast.success('Password changed')
       setCurrent(''); setNext('')
     } catch (e: any) {
-      toast.error(e.message)
+      if (e.message === 'Network Error') {
+        toast.error('Can\'t respond', {
+          style: {
+            background: 'green',
+            color: 'white',
+          },
+        });
+      } else {
+        toast.error(e.message);
+      }
     } finally {
       setSavingPw(false)
     }
