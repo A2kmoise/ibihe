@@ -29,7 +29,16 @@ export default function LoginPage() {
         navigate(redirect)
       }
     } catch (err: any) {
-      setError(err.message || 'Login failed')
+      if (err.message === 'Network Error') {
+        toast.error('Can\'t respond', {
+          style: {
+            background: 'green',
+            color: 'white',
+          },
+        });
+      } else {
+        setError(err.message || 'Login failed')
+      }
     } finally {
       setLoading(false)
     }
