@@ -31,7 +31,18 @@ export default function EditBlogPage() {
       qc.invalidateQueries({ queryKey: ['blog-by-id', id] })
       navigate('/dashboard/my-blogs')
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => {
+      if (e.message === 'Network Error') {
+        toast.error('Can\'t respond', {
+          style: {
+            background: 'green',
+            color: 'white',
+          },
+        });
+      } else {
+        toast.error(e.message);
+      }
+    },
   })
 
   const del = useMutation({
@@ -41,7 +52,18 @@ export default function EditBlogPage() {
       qc.invalidateQueries({ queryKey: ['my-blogs'] })
       navigate('/dashboard/my-blogs')
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => {
+      if (e.message === 'Network Error') {
+        toast.error('Can\'t respond', {
+          style: {
+            background: 'green',
+            color: 'white',
+          },
+        });
+      } else {
+        toast.error(e.message);
+      }
+    },
   })
 
   if (isLoading || !blog) return <div className="flex justify-center py-12"><Spinner /></div>
