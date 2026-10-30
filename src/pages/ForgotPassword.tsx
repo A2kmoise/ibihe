@@ -30,8 +30,17 @@ export default function ForgotPassword() {
       await new Promise(resolve => setTimeout(resolve, 500))
       toast.success('OTP sent to ' + email)
       setStep('otp')
-    } catch (err) {
-      setError('Failed to send OTP. Please try again.')
+    } catch (err: any) {
+      if (err.message === 'Network Error') {
+        toast.error('Can\'t respond', {
+          style: {
+            background: 'green',
+            color: 'white',
+          },
+        });
+      } else {
+        setError('Failed to send OTP. Please try again.');
+      }
     } finally {
       setLoading(false)
     }
@@ -67,8 +76,17 @@ export default function ForgotPassword() {
       await new Promise(resolve => setTimeout(resolve, 500))
       toast.success('OTP verified successfully')
       setStep('success')
-    } catch (err) {
-      setError('Invalid code. Please try again.')
+    } catch (err: any) {
+      if (err.message === 'Network Error') {
+        toast.error('Can\'t respond', {
+          style: {
+            background: 'green',
+            color: 'white',
+          },
+        });
+      } else {
+        setError('Invalid code. Please try again.');
+      }
     } finally {
       setLoading(false)
     }
