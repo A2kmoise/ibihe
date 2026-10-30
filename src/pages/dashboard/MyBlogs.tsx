@@ -20,7 +20,18 @@ export default function MyBlogs() {
       queryClient.invalidateQueries({ queryKey: ['my-blogs'] })
       toast.success('Blog deleted')
     },
-    onError: () => toast.error('Failed to delete blog'),
+    onError: (e: Error) => {
+      if (e.message === 'Network Error') {
+        toast.error('Can\'t respond', {
+          style: {
+            background: 'green',
+            color: 'white',
+          },
+        });
+      } else {
+        toast.error(e.message);
+      }
+    },
   })
 
   if (isLoading) {
