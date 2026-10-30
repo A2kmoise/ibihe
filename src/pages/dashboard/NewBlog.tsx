@@ -15,7 +15,18 @@ export default function NewBlogPage() {
       qc.invalidateQueries({ queryKey: ['blogs'] })
       navigate('/dashboard/my-blogs')
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => {
+      if (e.message === 'Network Error') {
+        toast.error('Can\'t respond', {
+          style: {
+            background: 'green',
+            color: 'white',
+          },
+        });
+      } else {
+        toast.error(e.message);
+      }
+    },
   })
   return <BlogForm submitting={create.isPending} onSubmit={(v) => create.mutate(v)} />
 }
