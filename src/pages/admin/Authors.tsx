@@ -20,7 +20,18 @@ export default function AdminAuthors() {
       queryClient.invalidateQueries({ queryKey: ['admin-authors'] })
       toast.success('Author status updated')
     },
-    onError: () => toast.error('Failed to update author'),
+    onError: (e: Error) => {
+      if (e.message === 'Network Error') {
+        toast.error('Can\'t respond', {
+          style: {
+            background: 'green',
+            color: 'white',
+          },
+        });
+      } else {
+        toast.error(e.message);
+      }
+    },
   })
 
   return (
