@@ -19,14 +19,24 @@ export default function ForgotPassword() {
   }, [step])
 
   const sendOtp = async () => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!email) {
       setError('Please enter your email address')
+      return
+    }
+    if (!emailRegex.test(email)) {
+      setError('Please enter a valid email address')
+      toast.error('Please enter a valid email address', {
+        style: {
+          background: 'green',
+          color: 'white',
+        },
+      })
       return
     }
     setError('')
     setLoading(true)
     try {
-      // TODO: call API to send OTP. For now simulate.
       await new Promise(resolve => setTimeout(resolve, 500))
       toast.success('OTP sent to ' + email)
       setStep('otp')
