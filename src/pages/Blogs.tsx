@@ -19,7 +19,12 @@ export default function BlogsPage() {
       <p className="mt-2 text-muted-foreground">Read from our community of writers</p>
 
       {isLoading ? (
-        <div className="mt-12 text-center text-muted-foreground">Loading...</div>
+        <div className="flex items-center justify-center py-20">
+          <div className="text-center">
+            <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
+            <p className="mt-4 text-sm text-muted-foreground">Loading...</p>
+          </div>
+        </div>
       ) : (
         <>
           <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
