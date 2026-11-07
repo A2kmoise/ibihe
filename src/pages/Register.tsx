@@ -36,13 +36,17 @@ export default function RegisterPage() {
       toast.success('Account created — please log in')
       navigate('/login')
     } catch (err: any) {
-      if (err.message === 'Email already registered') {
+      const msg: string = err.message || ''
+      const isEmailConflict =
+        msg.toLowerCase().includes('email') &&
+        (msg.toLowerCase().includes('already') || msg.toLowerCase().includes('exist') || msg.toLowerCase().includes('taken'))
+      if (isEmailConflict) {
         toast.error('This email is already registered. Please sign in instead.')
         navigate('/login')
       } else if (err.message === 'Network Error') {
         toast.error('No internet connection. Please check your network and try again.')
       } else {
-        setError(err.message || 'Registration failed. Please try again.')
+        setError(msg || 'Registration failed. Please try again.')
       }
     } finally {
       setLoading(false)
