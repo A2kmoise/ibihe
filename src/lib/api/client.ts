@@ -52,8 +52,12 @@ async function http<T>(path: string, opts: RequestInit = {}): Promise<T> {
     }
     return res.json() as Promise<T>;
   } catch (e) {
+    // Re-throw HTTP errors (already processed above) without overwriting the message
+    if (e instanceof Error && !(e instanceof TypeError)) {
+      throw e;
+    }
     console.error("Network error while calling", BASE + path, e);
-    throw new Error("Unable to connect to API server. Ensure the backend is running.");
+    throw new Error("Service is currently unavailable. Please contact the system owners if this persists.");
   }
 }
 

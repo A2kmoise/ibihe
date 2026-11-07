@@ -26,30 +26,19 @@ export default function ForgotPassword() {
     }
     if (!emailRegex.test(email)) {
       setError('Please enter a valid email address')
-      toast.error('Please enter a valid email address', {
-        style: {
-          background: 'green',
-          color: 'white',
-        },
-      })
       return
     }
     setError('')
     setLoading(true)
     try {
       await new Promise(resolve => setTimeout(resolve, 500))
-      toast.success('OTP sent to ' + email)
+      toast.success('Verification code sent to ' + email)
       setStep('otp')
     } catch (err: any) {
       if (err.message === 'Network Error') {
-        toast.error('Can\'t respond', {
-          style: {
-            background: 'green',
-            color: 'white',
-          },
-        });
+        toast.error('No internet connection. Please check your network and try again.')
       } else {
-        setError('Failed to send OTP. Please try again.');
+        setError('Failed to send OTP. Please try again.')
       }
     } finally {
       setLoading(false)
@@ -84,18 +73,13 @@ export default function ForgotPassword() {
     try {
       // TODO: verify via API
       await new Promise(resolve => setTimeout(resolve, 500))
-      toast.success('OTP verified successfully')
+      // Success screen handles the confirmation — no redundant toast needed
       setStep('success')
     } catch (err: any) {
       if (err.message === 'Network Error') {
-        toast.error('Can\'t respond', {
-          style: {
-            background: 'green',
-            color: 'white',
-          },
-        });
+        toast.error('No internet connection. Please check your network and try again.')
       } else {
-        setError('Invalid code. Please try again.');
+        setError('Invalid code. Please try again.')
       }
     } finally {
       setLoading(false)

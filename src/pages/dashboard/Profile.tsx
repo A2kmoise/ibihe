@@ -32,14 +32,9 @@ export default function ProfilePage() {
       toast.success('Profile updated')
     } catch (e: any) {
       if (e.message === 'Network Error') {
-        toast.error('Can\'t respond', {
-          style: {
-            background: 'green',
-            color: 'white',
-          },
-        });
+        toast.error('No internet connection. Please check your network and try again.')
       } else {
-        toast.error(e.message);
+        toast.error(e.message || 'Failed to update profile. Please try again.')
       }
     } finally {
       setSavingProfile(false)
@@ -55,14 +50,9 @@ export default function ProfilePage() {
       setCurrent(''); setNext('')
     } catch (e: any) {
       if (e.message === 'Network Error') {
-        toast.error('Can\'t respond', {
-          style: {
-            background: 'green',
-            color: 'white',
-          },
-        });
+        toast.error('No internet connection. Please check your network and try again.')
       } else {
-        toast.error(e.message);
+        toast.error(e.message || 'Failed to update password. Please try again.')
       }
     } finally {
       setSavingPw(false)

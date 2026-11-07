@@ -33,14 +33,9 @@ export default function EditBlogPage() {
     },
     onError: (e: Error) => {
       if (e.message === 'Network Error') {
-        toast.error('Can\'t respond', {
-          style: {
-            background: 'green',
-            color: 'white',
-          },
-        });
+        toast.error('No internet connection. Please check your network and try again.')
       } else {
-        toast.error(e.message);
+        toast.error(e.message || 'Failed to update blog. Please try again.')
       }
     },
   })
@@ -54,14 +49,9 @@ export default function EditBlogPage() {
     },
     onError: (e: Error) => {
       if (e.message === 'Network Error') {
-        toast.error('Can\'t respond', {
-          style: {
-            background: 'green',
-            color: 'white',
-          },
-        });
+        toast.error('No internet connection. Please check your network and try again.')
       } else {
-        toast.error(e.message);
+        toast.error(e.message || 'Failed to delete blog. Please try again.')
       }
     },
   })

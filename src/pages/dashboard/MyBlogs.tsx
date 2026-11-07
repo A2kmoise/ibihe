@@ -22,14 +22,9 @@ export default function MyBlogs() {
     },
     onError: (e: Error) => {
       if (e.message === 'Network Error') {
-        toast.error('Can\'t respond', {
-          style: {
-            background: 'green',
-            color: 'white',
-          },
-        });
+        toast.error('No internet connection. Please check your network and try again.')
       } else {
-        toast.error(e.message);
+        toast.error(e.message || 'Failed to delete blog. Please try again.')
       }
     },
   })

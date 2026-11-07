@@ -37,17 +37,12 @@ export default function RegisterPage() {
       navigate('/login')
     } catch (err: any) {
       if (err.message === 'Email already registered') {
-        toast.success('Email already registered. Please log in.')
+        toast.error('This email is already registered. Please sign in instead.')
         navigate('/login')
       } else if (err.message === 'Network Error') {
-        toast.error('Can\'t respond', {
-          style: {
-            background: 'green',
-            color: 'white',
-          },
-        });
+        toast.error('No internet connection. Please check your network and try again.')
       } else {
-        setError(err.message || 'Registration failed')
+        setError(err.message || 'Registration failed. Please try again.')
       }
     } finally {
       setLoading(false)
