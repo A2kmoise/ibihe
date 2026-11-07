@@ -56,8 +56,7 @@ async function http<T>(path: string, opts: RequestInit = {}): Promise<T> {
     if (e instanceof Error && !(e instanceof TypeError)) {
       throw e;
     }
-    console.error("Network error while calling", BASE + path, e);
-    throw new Error("Service is currently unavailable. Please contact the system owners if this persists.");
+    throw new Error("Network Error");
   }
 }
 
