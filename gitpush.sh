@@ -1,6 +1,13 @@
 
 #!/bin/bash
 
+set -e
+
+if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+    echo "Error: Not inside a Git repository."
+    exit 1
+fi
+
 echo "Enter commit message:"
 read -r message
 
@@ -9,19 +16,42 @@ if [ -z "$message" ]; then
     exit 1
 fi
 
-git add -A
+branch=$(git branch --show-current)
 
-if git diff --cached --quiet; then
+if [ -z "$branch" ]; then
+    echo "Error: No current branch."
+    exit 1
+fi
+
+mapfile -d '' files < <(git status --porcelain -z | while IFS= read -r -d '' entry; do
+    status="${entry:0:2}"
+    file="${entry:3}"
+
+    if [[ "$status" == *R* || "$status" == *C* ]]; then
+        IFS= read -r -d '' newfile || true
+        printf '%s\0' "$newfile"
+    else
+        printf '%s\0' "$file"
+    fi
+done)
+
+if [ ${#files[@]} -eq 0 ]; then
     echo "No changes to commit."
     exit 0
 fi
 
-git commit -m "$message" || exit 1
+for file in "${files[@]}"; do
+    echo "Committing: $file"
 
-branch=$(git branch --show-current)
+    git add -A -- "$file"
 
-echo "Pushing to origin/$branch..."
+    if ! git diff --cached --quiet; then
+        git commit -m "$message: $file"
+    fi
+done
 
-git push -u origin "$branch" || exit 1
+echo "Pushing commits to origin/$branch..."
 
-echo "Successfully committed and pushed!"
+git push -u origin "$branch"
+
+echo "All files committed and pushed successfully!"
