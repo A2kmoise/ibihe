@@ -44,13 +44,13 @@ export default function LandingPage() {
   const blogSectionRef = useRef<HTMLElement>(null)
 
   // Fetch 10 blogs and split them
-  const { data: allBlogs } = useQuery({
+  const { data: allBlogs, isLoading: isLoadingBlogs } = useQuery({
     queryKey: ['all-blogs', page],
     queryFn: () => api.listBlogs({ page, pageSize: 10, sort: 'newest' }),
   })
 
   // Fetch carousel blogs (first 5 featured blogs)
-  const { data: carouselData } = useQuery({
+  const { data: carouselData, isLoading: isLoadingCarousel } = useQuery({
     queryKey: ['carousel-blogs'],
     queryFn: () => api.listBlogs({ page: 1, pageSize: 5, sort: 'newest' }),
   })
@@ -86,10 +86,17 @@ export default function LandingPage() {
     <div className="bg-background">
   <Navbar />
 
-      {/* Auto-Sliding Carousel */}
-      {carouselBlogs.length > 0 && (
-        <section className="border-b border-border bg-background">
-          <div className="w-full px-4 py-12">
+      {/* Auto-Sliding Carousel / Header Large Images Slot */}
+      <section className="border-b border-border bg-background">
+        <div className="w-full px-4 py-12">
+          {isLoadingCarousel ? (
+            <div className="relative aspect-[21/9] w-full overflow-hidden rounded-2xl border-2 border-border bg-muted/60 shadow-modern">
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-muted/30">
+                <div className="h-10 w-10 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
+                <p className="text-sm font-semibold text-muted-foreground animate-pulse">Loading featured blogs...</p>
+              </div>
+            </div>
+          ) : carouselBlogs.length > 0 ? (
             <div className="relative overflow-hidden rounded-2xl border-2 border-border bg-card shadow-modern">
               {/* Carousel Slides */}
               <div className="relative aspect-[21/9]">
@@ -164,9 +171,9 @@ export default function LandingPage() {
                 ))}
               </div>
             </div>
-          </div>
-        </section>
-      )}
+          ) : null}
+        </div>
+      </section>
 
 
       {/* Filters Section */}
@@ -260,69 +267,101 @@ export default function LandingPage() {
           {/* Left Column Blogs */}
           <div className="lg:col-span-1">
             <h2 className="mb-6 text-2xl font-bold text-primary">📰 Latest News</h2>
-            <div className="space-y-6">
-              {leftBlogs.map((blog: Blog) => (
-                <Link
-                  key={blog.id}
-                  to={`/blogs/${blog.slug}`}
-                  className="group block overflow-hidden rounded-xl border border-border bg-card shadow-modern transition-modern hover:scale-[1.02] hover:shadow-modern-lg"
-                >
-                  {blog.coverImage && (
-                    <img
-                      src={blog.coverImage}
-                      alt={blog.title}
-                      className="aspect-video w-full object-cover transition-transform group-hover:scale-105"
-                    />
-                  )}
-                  <div className="p-5">
-                    <span className="inline-block rounded-full bg-primary/10 px-3 py-1 text-xs font-bold text-primary">
-                      {blog.category.name}
-                    </span>
-                    <h3 className="mt-3 text-lg font-bold leading-tight group-hover:text-primary">{blog.title}</h3>
-                    <p className="mt-2 text-sm text-muted-foreground line-clamp-2">{blog.excerpt}</p>
-                    <div className="mt-4 flex items-center gap-2 text-xs text-muted-foreground">
-                      <span className="font-semibold text-foreground">{blog.author.name}</span>
-                      <span>•</span>
-                      <span>{new Date(blog.createdAt).toLocaleDateString()}</span>
+            {isLoadingBlogs ? (
+              <div className="space-y-6">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="overflow-hidden rounded-xl border border-border bg-card p-5 shadow-modern animate-pulse">
+                    <div className="aspect-video w-full rounded-lg bg-muted"></div>
+                    <div className="mt-4 h-4 w-20 rounded-full bg-muted"></div>
+                    <div className="mt-3 h-5 w-3/4 rounded bg-muted"></div>
+                    <div className="mt-2 h-4 w-full rounded bg-muted"></div>
+                    <div className="mt-4 flex items-center gap-2">
+                      <div className="h-3 w-24 rounded bg-muted"></div>
                     </div>
                   </div>
-                </Link>
-              ))}
-            </div>
+                ))}
+              </div>
+            ) : (
+              <div className="space-y-6">
+                {leftBlogs.map((blog: Blog) => (
+                  <Link
+                    key={blog.id}
+                    to={`/blogs/${blog.slug}`}
+                    className="group block overflow-hidden rounded-xl border border-border bg-card shadow-modern transition-modern hover:scale-[1.02] hover:shadow-modern-lg"
+                  >
+                    {blog.coverImage && (
+                      <img
+                        src={blog.coverImage}
+                        alt={blog.title}
+                        className="aspect-video w-full object-cover transition-transform group-hover:scale-105"
+                      />
+                    )}
+                    <div className="p-5">
+                      <span className="inline-block rounded-full bg-primary/10 px-3 py-1 text-xs font-bold text-primary">
+                        {blog.category.name}
+                      </span>
+                      <h3 className="mt-3 text-lg font-bold leading-tight group-hover:text-primary">{blog.title}</h3>
+                      <p className="mt-2 text-sm text-muted-foreground line-clamp-2">{blog.excerpt}</p>
+                      <div className="mt-4 flex items-center gap-2 text-xs text-muted-foreground">
+                        <span className="font-semibold text-foreground">{blog.author.name}</span>
+                        <span>•</span>
+                        <span>{new Date(blog.createdAt).toLocaleDateString()}</span>
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Right Column Blogs */}
           <div className="lg:col-span-1">
-            <h2 className="mb-6 text-2xl font-bold text-primary">📰 Latest News</h2>
-            <div className="space-y-6">
-              {rightBlogs.map((blog: Blog) => (
-                <Link
-                  key={blog.id}
-                  to={`/blogs/${blog.slug}`}
-                  className="group block overflow-hidden rounded-xl border border-border bg-card shadow-modern transition-modern hover:scale-[1.02] hover:shadow-modern-lg"
-                >
-                  {blog.coverImage && (
-                    <img
-                      src={blog.coverImage}
-                      alt={blog.title}
-                      className="aspect-video w-full object-cover transition-transform group-hover:scale-105"
-                    />
-                  )}
-                  <div className="p-5">
-                    <span className="inline-block rounded-full bg-primary/10 px-3 py-1 text-xs font-bold text-primary">
-                      {blog.category.name}
-                    </span>
-                    <h3 className="mt-3 text-lg font-bold leading-tight group-hover:text-primary">{blog.title}</h3>
-                    <p className="mt-2 text-sm text-muted-foreground line-clamp-2">{blog.excerpt}</p>
-                    <div className="mt-4 flex items-center gap-2 text-xs text-muted-foreground">
-                      <span className="font-semibold text-foreground">{blog.author.name}</span>
-                      <span>•</span>
-                      <span>{new Date(blog.createdAt).toLocaleDateString()}</span>
+            <h2 className="mb-6 text-2xl font-bold text-primary">📰 Trending Stories</h2>
+            {isLoadingBlogs ? (
+              <div className="space-y-6">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="overflow-hidden rounded-xl border border-border bg-card p-5 shadow-modern animate-pulse">
+                    <div className="aspect-video w-full rounded-lg bg-muted"></div>
+                    <div className="mt-4 h-4 w-20 rounded-full bg-muted"></div>
+                    <div className="mt-3 h-5 w-3/4 rounded bg-muted"></div>
+                    <div className="mt-2 h-4 w-full rounded bg-muted"></div>
+                    <div className="mt-4 flex items-center gap-2">
+                      <div className="h-3 w-24 rounded bg-muted"></div>
                     </div>
                   </div>
-                </Link>
-              ))}
-            </div>
+                ))}
+              </div>
+            ) : (
+              <div className="space-y-6">
+                {rightBlogs.map((blog: Blog) => (
+                  <Link
+                    key={blog.id}
+                    to={`/blogs/${blog.slug}`}
+                    className="group block overflow-hidden rounded-xl border border-border bg-card shadow-modern transition-modern hover:scale-[1.02] hover:shadow-modern-lg"
+                  >
+                    {blog.coverImage && (
+                      <img
+                        src={blog.coverImage}
+                        alt={blog.title}
+                        className="aspect-video w-full object-cover transition-transform group-hover:scale-105"
+                      />
+                    )}
+                    <div className="p-5">
+                      <span className="inline-block rounded-full bg-primary/10 px-3 py-1 text-xs font-bold text-primary">
+                        {blog.category.name}
+                      </span>
+                      <h3 className="mt-3 text-lg font-bold leading-tight group-hover:text-primary">{blog.title}</h3>
+                      <p className="mt-2 text-sm text-muted-foreground line-clamp-2">{blog.excerpt}</p>
+                      <div className="mt-4 flex items-center gap-2 text-xs text-muted-foreground">
+                        <span className="font-semibold text-foreground">{blog.author.name}</span>
+                        <span>•</span>
+                        <span>{new Date(blog.createdAt).toLocaleDateString()}</span>
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Advertisements */}
