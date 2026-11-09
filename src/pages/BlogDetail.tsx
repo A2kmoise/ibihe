@@ -2,7 +2,8 @@ import { useQuery } from '@tanstack/react-query'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { api } from '@/lib/api/client'
 import { format } from 'date-fns'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, Share2 } from 'lucide-react'
+import { toast } from 'sonner'
 
 export default function BlogDetailPage() {
   const { slug } = useParams<{ slug: string }>()
@@ -16,6 +17,12 @@ export default function BlogDetailPage() {
 
   const handleGoBack = () => {
     navigate(-1)
+  }
+
+  const handleShare = () => {
+    const blogUrl = window.location.href
+    navigator.clipboard.writeText(blogUrl)
+    toast.success('Blog link copied to clipboard!')
   }
 
   if (isLoading) {
@@ -86,13 +93,23 @@ export default function BlogDetailPage() {
       </nav>
 
       <article className="mx-auto max-w-4xl px-4 py-16">
-        <button
-          onClick={handleGoBack}
-          className="inline-flex items-center gap-2 text-sm font-bold text-muted-foreground hover:text-primary transition-colors"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Back to blogs
-        </button>
+        <div className="flex items-center justify-between">
+          <button
+            onClick={handleGoBack}
+            className="inline-flex items-center gap-2 text-sm font-bold text-muted-foreground hover:text-primary transition-colors"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back to blogs
+          </button>
+
+          <button
+            onClick={handleShare}
+            className="inline-flex items-center gap-2 text-sm font-bold text-muted-foreground hover:text-primary transition-colors"
+          >
+            <Share2 className="h-4 w-4" />
+            Share
+          </button>
+        </div>
 
         <header className="mt-8">
           {blog.coverImage && (
