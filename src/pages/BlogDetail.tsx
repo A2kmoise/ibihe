@@ -4,6 +4,7 @@ import { api } from '@/lib/api/client'
 import { format } from 'date-fns'
 import { ArrowLeft, Share2 } from 'lucide-react'
 import { toast } from 'sonner'
+import { useEffect } from 'react'
 
 export default function BlogDetailPage() {
   const { slug } = useParams<{ slug: string }>()
@@ -14,6 +15,22 @@ export default function BlogDetailPage() {
     queryFn: () => api.getBlog(slug!),
     enabled: !!slug,
   })
+
+  useEffect(() => {
+    if (blog) {
+      // Update meta tags
+      document.title = blog.title
+      const metaDescription = document.querySelector('meta[name="description"]')
+      if (metaDescription) {
+        metaDescription.setAttribute('content', blog.excerpt)
+      }
+
+      const metaImage = document.querySelector('meta[property="og:image"]')
+      if (metaImage) {
+        metaImage.setAttribute('content', blog.coverImage || '')
+      }
+    }
+  }, [blog])
 
   const handleGoBack = () => {
     navigate(-1)
