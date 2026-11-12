@@ -3,6 +3,7 @@ import { api } from '@/lib/api/client'
 import { BlogCard } from '@/components/BlogCard'
 import { Pagination } from '@/components/Pagination'
 import { useState } from 'react'
+import LinkPreview from '@/components/LinkPreview'
 
 export default function BlogsPage() {
   const [page, setPage] = useState(1)
@@ -17,6 +18,10 @@ export default function BlogsPage() {
     <div className="mx-auto max-w-7xl px-4 py-16">
       <h1 className="text-5xl font-black tracking-tight">All blogs</h1>
       <p className="mt-2 text-muted-foreground">Read from our community of writers</p>
+
+      <div className="mt-8">
+        <LinkPreview url="https://github.com/pacocoursey/next-themes" />
+      </div>
 
       {isLoading ? (
         <div className="flex items-center justify-center py-20">
