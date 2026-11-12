@@ -58,7 +58,7 @@ const LinkPreview: React.FC<LinkPreviewProps> = ({ url }) => {
 
   return (
     <div className="link-preview-card">
-      {metadata.image && <img src={metadata.image} alt={metadata.title} className="link-preview-image" />}
+      <img src={metadata.image || "/menya_favicon.png"} alt={metadata.title} className="link-preview-image" />
       <div className="link-preview-content">
         <div className="link-preview-title">{metadata.title}</div>
         <div className="link-preview-description">{metadata.description}</div>
