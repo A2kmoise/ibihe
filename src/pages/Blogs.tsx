@@ -7,11 +7,17 @@ import LinkPreview from '@/components/LinkPreview'
 
 export default function BlogsPage() {
   const [page, setPage] = useState(1)
+  const [category, setCategory] = useState<string>()
   const pageSize = 12
 
   const { data, isLoading } = useQuery({
-    queryKey: ['blogs', page],
-    queryFn: () => api.listBlogs({ page, pageSize, sort: 'newest' }),
+    queryKey: ['blogs', page, category],
+    queryFn: () => api.listBlogs({ page, pageSize, sort: 'newest', category }),
+  })
+
+  const { data: categories } = useQuery({
+    queryKey: ['categories'],
+    queryFn: api.categories,
   })
 
   return (
@@ -22,6 +28,28 @@ export default function BlogsPage() {
       <div className="mt-8">
         <LinkPreview url="https://github.com/pacocoursey/next-themes" />
       </div>
+
+      {categories && (
+        <div className="mt-8 flex flex-wrap items-center gap-2">
+          <button
+            onClick={() => setCategory(undefined)}
+            className={`px-3 py-1 text-sm rounded-full ${!category ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
+              }`}
+          >
+            All
+          </button>
+          {categories.map((c) => (
+            <button
+              key={c.id}
+              onClick={() => setCategory(c.id)}
+              className={`px-3 py-1 text-sm rounded-full ${category === c.id ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
+                }`}
+            >
+              {c.name}
+            </button>
+          ))}
+        </div>
+      )}
 
       {isLoading ? (
         <div className="flex items-center justify-center py-20">
