@@ -75,34 +75,31 @@ export default function AdminLayout() {
       </aside>
 
       {/* Main Content */}
-      <main className="ml-64 flex-1 p-8">
-        <div className="mx-auto max-w-7xl">
-          {/* Tabs Navigation */}
-          <div className="mb-8">
-            <div className="flex gap-2 border-b-2 border-border">
+      <main className="ml-64 flex-1 bg-background">
+        <div className="border-b-2 border-border bg-card px-8">
+          <div className="mx-auto max-w-7xl">
+            <div className="flex gap-2">
               {tabs.map((tab) => {
                 const active = isActive(tab)
                 return (
                   <Link
                     key={tab.to}
                     to={tab.to}
-                    className={`relative px-6 py-3 text-sm font-bold uppercase tracking-wider transition-colors ${active
-                      ? 'text-primary'
-                      : 'text-muted-foreground hover:text-foreground'
+                    className={`relative px-4 py-4 text-sm font-bold uppercase tracking-wider transition-colors ${active ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
                       }`}
                   >
                     {tab.label}
-                    {active && (
-                      <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" />
-                    )}
+                    {active && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" />}
                   </Link>
                 )
               })}
             </div>
           </div>
-
-          {/* Tab Content */}
-          <Outlet />
+        </div>
+        <div className="p-8">
+          <div className="mx-auto max-w-7xl">
+            <Outlet />
+          </div>
         </div>
       </main>
     </div>
