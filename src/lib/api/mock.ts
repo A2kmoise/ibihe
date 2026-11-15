@@ -253,6 +253,7 @@ export const mockApi = {
       totalBlogs: BLOGS.length,
       totalAuthors: USERS.filter((u) => u.role === "AUTHOR").length,
       totalAdmins: USERS.filter((u) => u.role === "ADMIN").length,
+      totalViews: BLOGS.reduce((acc, b) => acc + (b.views || 0), 0),
       recentActivity: BLOGS.slice(0, 6).map((b) => ({
         id: b.id,
         text: `${b.author.name} published "${b.title}"`,
