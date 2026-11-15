@@ -2,8 +2,10 @@ import { useQuery } from '@tanstack/react-query'
 import { api } from '@/lib/api/client'
 import { useAuth } from '@/lib/auth-context'
 import { Link } from 'react-router-dom'
-import { PenSquare, FileText, TrendingUp } from 'lucide-react'
+import { PenSquare, FileText, Eye } from 'lucide-react'
 import type { Blog } from '@/lib/api/types'
+import { StatCard } from '@/components/StatCard'
+import { ActionCard } from '@/components/ActionCard'
 
 export default function DashboardHome() {
   const { user } = useAuth()
@@ -17,95 +19,68 @@ export default function DashboardHome() {
   const draftCount = (myBlogs?.total || 0) - publishedCount
 
   return (
-    <div>
-      <div className="mb-8">
+    <div className="space-y-8">
+      <div>
         <h1 className="text-4xl font-black">Welcome back, {user?.name} 👋</h1>
         <p className="mt-2 text-muted-foreground">Here's your writing overview</p>
       </div>
 
-      {/* Stats Grid - 3 cards instead of 4 */}
-      <div className="grid gap-6 md:grid-cols-3">
-        <div className="group overflow-hidden rounded-xl border border-border bg-card p-6 shadow-modern transition-modern hover:scale-[1.02] hover:shadow-modern-lg">
-          <div className="flex items-start justify-between">
-            <div>
-              <p className="text-sm font-bold uppercase tracking-wider text-muted-foreground">Total Blogs</p>
-              <p className="mt-3 text-5xl font-black">{myBlogs?.total || 0}</p>
-              <p className="mt-2 flex items-center text-xs text-muted-foreground">
-                <TrendingUp className="mr-1 h-3 w-3" />
-                All your content
-              </p>
-            </div>
-            <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-primary/10 text-primary">
-              <FileText className="h-7 w-7" />
-            </div>
-          </div>
-        </div>
-
-        <div className="group overflow-hidden rounded-xl border border-border bg-gradient-to-br from-primary/10 to-primary/5 p-6 shadow-modern transition-modern hover:scale-[1.02] hover:shadow-modern-lg">
-          <div className="flex items-start justify-between">
-            <div>
-              <p className="text-sm font-bold uppercase tracking-wider text-primary">Published</p>
-              <p className="mt-3 text-5xl font-black text-primary">{publishedCount}</p>
-              <p className="mt-2 flex items-center text-xs text-primary/80">
-                <TrendingUp className="mr-1 h-3 w-3" />
-                Live posts
-              </p>
-            </div>
-            <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-modern">
-              <PenSquare className="h-7 w-7" />
-            </div>
-          </div>
-        </div>
-
-        <div className="group overflow-hidden rounded-xl border border-border bg-card p-6 shadow-modern transition-modern hover:scale-[1.02] hover:shadow-modern-lg">
-          <div className="flex items-start justify-between">
-            <div>
-              <p className="text-sm font-bold uppercase tracking-wider text-muted-foreground">Drafts</p>
-              <p className="mt-3 text-5xl font-black">{draftCount}</p>
-              <p className="mt-2 flex items-center text-xs text-muted-foreground">
-                <FileText className="mr-1 h-3 w-3" />
-                Unpublished
-              </p>
-            </div>
-            <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-muted text-foreground">
-              <FileText className="h-7 w-7" />
-            </div>
-          </div>
-        </div>
+      {/* Stats Grid */}
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <StatCard
+          title="Total Blogs"
+          value={myBlogs?.total || 0}
+          icon={FileText}
+          description="All your content"
+        />
+        <StatCard
+          title="Published"
+          value={publishedCount}
+          icon={PenSquare}
+          description="Live posts"
+          primary
+        />
+        <StatCard
+          title="Drafts"
+          value={draftCount}
+          icon={FileText}
+          description="Unpublished"
+        />
+        <StatCard
+          title="Total Views"
+          value={totalViews}
+          icon={Eye}
+          description="Across all blogs"
+        />
       </div>
 
       {/* Quick Actions */}
-      <div className="mt-8 overflow-hidden rounded-xl border border-border bg-card p-8 shadow-modern">
-        <h2 className="mb-6 text-2xl font-black">Quick Actions ⚡</h2>
+      <div className="overflow-hidden rounded-xl border border-border bg-card p-6 shadow-modern">
+        <h2 className="mb-4 text-2xl font-black">Quick Actions ⚡</h2>
         <div className="grid gap-4 md:grid-cols-3">
-          <Link
+          <ActionCard
             to="/dashboard/blogs/new"
-            className="group overflow-hidden rounded-xl bg-gradient-to-br from-primary to-emerald-600 p-6 text-primary-foreground shadow-modern transition-modern hover:scale-[1.02] hover:shadow-modern-lg"
-          >
-            <PenSquare className="mb-4 h-8 w-8" />
-            <div className="text-xl font-black">Write New Blog</div>
-            <p className="mt-2 text-sm opacity-90">Start writing your next post</p>
-          </Link>
-
-          <Link
+            icon={PenSquare}
+            title="Write New Blog"
+            description="Start your next masterpiece"
+            primary
+          />
+          <ActionCard
             to="/dashboard/my-blogs"
-            className="group overflow-hidden rounded-xl border border-border bg-background p-6 shadow-modern transition-modern hover:scale-[1.02] hover:border-primary hover:shadow-modern-lg"
-          >
-            <FileText className="mb-4 h-8 w-8 text-primary" />
-            <div className="text-xl font-black">View All Blogs</div>
-            <p className="mt-2 text-sm text-muted-foreground">Manage your content</p>
-          </Link>
-
-          <Link
+            icon={FileText}
+            title="View All Blogs"
+            description="Manage your content"
+          />
+          <ActionCard
             to="/dashboard/profile"
-            className="group overflow-hidden rounded-xl border border-border bg-background p-6 shadow-modern transition-modern hover:scale-[1.02] hover:border-primary hover:shadow-modern-lg"
-          >
-            <div className="mb-4 flex h-8 w-8 items-center justify-center rounded-full bg-primary text-lg font-bold text-primary-foreground">
-              {user?.name?.charAt(0).toUpperCase()}
-            </div>
-            <div className="text-xl font-black">Edit Profile</div>
-            <p className="mt-2 text-sm text-muted-foreground">Update your details</p>
-          </Link>
+            icon={() => (
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-lg font-bold text-primary-foreground">
+                {user?.name?.charAt(0).toUpperCase()}
+              </div>
+            )}
+            title="Edit Profile"
+            description="Update your details"
+          />
         </div>
       </div>
 
