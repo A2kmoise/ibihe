@@ -110,9 +110,12 @@ export default function DashboardLayout() {
       </aside>
 
       {/* Main Content */}
-      <main className="ml-64 flex-1 p-8">
-        <div className="mx-auto max-w-7xl">
-          <Outlet />
+      {/* Main Content */}
+      <main className="ml-64 flex-1 bg-background">
+        <div className="p-8">
+          <div className="mx-auto max-w-7xl">
+            <Outlet />
+          </div>
         </div>
       </main>
     </div>
