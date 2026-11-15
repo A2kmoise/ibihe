@@ -40,8 +40,9 @@ export interface Paginated<T> {
 }
 
 export interface AdminStats {
-  totalBlogs: number;
-  totalAuthors: number;
-  totalAdmins: number;
-  recentActivity: { id: string; text: string; date: string }[];
+  totalBlogs: number
+  totalAuthors: number
+  totalAdmins: number
+  totalViews: number
+  recentActivity: { id: string; text: string; date: string }[]
 }
