@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { api } from '@/lib/api/client'
 import { Users, FileText, Shield, TrendingUp, Activity } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import { StatCard } from '@/components/StatCard'
 
 export default function AdminDashboard() {
   const { data: stats } = useQuery({
@@ -12,54 +13,32 @@ export default function AdminDashboard() {
   return (
     <div>
       {/* Stats Grid */}
-      <div className="grid gap-6 md:grid-cols-3">
-        <div className="group overflow-hidden rounded-xl border border-border bg-card p-6 shadow-modern transition-modern hover:scale-[1.02] hover:shadow-modern-lg">
-          <div className="flex items-start justify-between">
-            <div>
-              <p className="text-sm font-bold uppercase tracking-wider text-muted-foreground">Total Blogs</p>
-              <p className="mt-3 text-5xl font-black">{stats?.totalBlogs || 0}</p>
-              <p className="mt-2 flex items-center text-xs text-muted-foreground">
-                <TrendingUp className="mr-1 h-3 w-3" />
-                Active content
-              </p>
-            </div>
-            <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-primary/10 text-primary">
-              <FileText className="h-7 w-7" />
-            </div>
-          </div>
-        </div>
-
-        <div className="group overflow-hidden rounded-xl border border-border bg-gradient-to-br from-primary/10 to-primary/5 p-6 shadow-modern transition-modern hover:scale-[1.02] hover:shadow-modern-lg">
-          <div className="flex items-start justify-between">
-            <div>
-              <p className="text-sm font-bold uppercase tracking-wider text-primary">Total Authors</p>
-              <p className="mt-3 text-5xl font-black text-primary">{stats?.totalAuthors || 0}</p>
-              <p className="mt-2 flex items-center text-xs text-primary/80">
-                <Activity className="mr-1 h-3 w-3" />
-                Content creators
-              </p>
-            </div>
-            <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-modern">
-              <Users className="h-7 w-7" />
-            </div>
-          </div>
-        </div>
-
-        <div className="group overflow-hidden rounded-xl border border-border bg-card p-6 shadow-modern transition-modern hover:scale-[1.02] hover:shadow-modern-lg">
-          <div className="flex items-start justify-between">
-            <div>
-              <p className="text-sm font-bold uppercase tracking-wider text-muted-foreground">Total Admins</p>
-              <p className="mt-3 text-5xl font-black">{stats?.totalAdmins || 0}</p>
-              <p className="mt-2 flex items-center text-xs text-muted-foreground">
-                <Shield className="mr-1 h-3 w-3" />
-                Moderators
-              </p>
-            </div>
-            <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-muted text-foreground">
-              <Shield className="h-7 w-7" />
-            </div>
-          </div>
-        </div>
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <StatCard
+          title="Total Blogs"
+          value={stats?.totalBlogs || 0}
+          icon={FileText}
+          description="Active content"
+        />
+        <StatCard
+          title="Total Authors"
+          value={stats?.totalAuthors || 0}
+          icon={Users}
+          description="Content creators"
+          primary
+        />
+        <StatCard
+          title="Total Admins"
+          value={stats?.totalAdmins || 0}
+          icon={Shield}
+          description="Moderators"
+        />
+        <StatCard
+          title="Total Views"
+          value={stats?.totalViews || 0}
+          icon={TrendingUp}
+          description="Across all blogs"
+        />
       </div>
 
       {/* Quick Actions */}
