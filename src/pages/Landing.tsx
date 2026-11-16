@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query'
 import { api } from '@/lib/api/client'
 import { useState, useRef, useEffect } from 'react'
 import type { Blog } from '@/lib/api/types'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Rocket, Newspaper, TrendingUp, Megaphone } from 'lucide-react'
 
 // Mock ads data
 const Navbar = () => (
@@ -246,7 +246,10 @@ export default function LandingPage() {
         <div className="mx-auto max-w-7xl px-4 py-6">
           <div className="flex flex-col gap-3 rounded-xl border border-primary/20 bg-background/50 p-6 shadow-modern backdrop-blur-sm md:flex-row md:items-center md:justify-between">
             <div>
-              <p className="text-sm font-bold text-primary">🚀 Become a Corporate Partner</p>
+              <p className="text-sm font-bold text-primary flex items-center gap-1.5">
+                <Rocket className="h-4 w-4" />
+                Become a Corporate Partner
+              </p>
               <p className="mt-1 text-sm text-muted-foreground">Reach millions of readers — join our Corporate Suite now</p>
             </div>
             <div className="flex gap-2">
@@ -266,7 +269,10 @@ export default function LandingPage() {
         <div className="grid gap-8 lg:grid-cols-3">
           {/* Left Column Blogs */}
           <div className="lg:col-span-1">
-            <h2 className="mb-6 text-2xl font-bold text-primary">📰 Latest News</h2>
+            <h2 className="mb-6 flex items-center gap-2 text-2xl font-bold text-primary">
+              <Newspaper className="h-5 w-5" />
+              Latest News
+            </h2>
             {isLoadingBlogs ? (
               <div className="space-y-6">
                 {[1, 2, 3].map((i) => (
@@ -316,7 +322,10 @@ export default function LandingPage() {
 
           {/* Right Column Blogs */}
           <div className="lg:col-span-1">
-            <h2 className="mb-6 text-2xl font-bold text-primary">📰 Trending Stories</h2>
+            <h2 className="mb-6 flex items-center gap-2 text-2xl font-bold text-primary">
+              <TrendingUp className="h-5 w-5" />
+              Trending Stories
+            </h2>
             {isLoadingBlogs ? (
               <div className="space-y-6">
                 {[1, 2, 3].map((i) => (
@@ -366,7 +375,10 @@ export default function LandingPage() {
 
           {/* Advertisements */}
           <div className="lg:col-span-1">
-            <h2 className="mb-6 text-2xl font-bold text-primary">💰 Sponsored</h2>
+            <h2 className="mb-6 flex items-center gap-2 text-2xl font-bold text-primary">
+              <Megaphone className="h-5 w-5" />
+              Sponsored
+            </h2>
             <div className="space-y-6">
               {mockAds.map((ad) => (
                 <a

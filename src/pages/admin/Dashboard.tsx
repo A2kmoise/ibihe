@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { api } from '@/lib/api/client'
-import { Users, FileText, Shield, TrendingUp, Activity } from 'lucide-react'
+import { Users, FileText, Shield, TrendingUp, Activity, Zap, BarChart3 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { StatCard } from '@/components/StatCard'
 
@@ -43,7 +43,10 @@ export default function AdminDashboard() {
 
       {/* Quick Actions */}
       <div className="mt-8 overflow-hidden rounded-xl border border-border bg-card p-8 shadow-modern">
-        <h2 className="mb-6 text-2xl font-black">Quick Actions ⚡</h2>
+        <h2 className="mb-6 flex items-center gap-2 text-2xl font-black">
+          <Zap className="h-5 w-5 text-primary" />
+          Quick Actions
+        </h2>
         <div className="grid gap-4 md:grid-cols-3">
           <Link
             to="/admin/blogs"
@@ -77,7 +80,10 @@ export default function AdminDashboard() {
       {/* Recent Activity */}
       {stats?.recentActivity && stats.recentActivity.length > 0 && (
         <div className="mt-8 overflow-hidden rounded-xl border border-border bg-card p-8 shadow-modern">
-          <h2 className="mb-6 text-2xl font-black">Recent Activity 📊</h2>
+          <h2 className="mb-6 flex items-center gap-2 text-2xl font-black">
+            <BarChart3 className="h-5 w-5 text-primary" />
+            Recent Activity
+          </h2>
           <div className="space-y-4">
             {stats.recentActivity.map((activity) => (
               <div

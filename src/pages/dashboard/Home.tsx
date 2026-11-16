@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { api } from '@/lib/api/client'
 import { useAuth } from '@/lib/auth-context'
 import { Link } from 'react-router-dom'
-import { PenSquare, FileText, Eye } from 'lucide-react'
+import { PenSquare, FileText, Eye, Zap, ScrollText, User } from 'lucide-react'
 import type { Blog } from '@/lib/api/types'
 import { StatCard } from '@/components/StatCard'
 import { ActionCard } from '@/components/ActionCard'
@@ -21,7 +21,7 @@ export default function DashboardHome() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-4xl font-black">Welcome back, {user?.name} 👋</h1>
+        <h1 className="text-4xl font-black">Welcome back, {user?.name}</h1>
         <p className="mt-2 text-muted-foreground">Here's your writing overview</p>
       </div>
 
@@ -56,7 +56,10 @@ export default function DashboardHome() {
 
       {/* Quick Actions */}
       <div className="overflow-hidden rounded-xl border border-border bg-card p-6 shadow-modern">
-        <h2 className="mb-4 text-2xl font-black">Quick Actions ⚡</h2>
+        <h2 className="mb-4 flex items-center gap-2 text-2xl font-black">
+          <Zap className="h-5 w-5 text-primary" />
+          Quick Actions
+        </h2>
         <div className="grid gap-4 md:grid-cols-3">
           <ActionCard
             to="/dashboard/blogs/new"
@@ -73,11 +76,7 @@ export default function DashboardHome() {
           />
           <ActionCard
             to="/dashboard/profile"
-            icon={() => (
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-lg font-bold text-primary-foreground">
-                {user?.name?.charAt(0).toUpperCase()}
-              </div>
-            )}
+            icon={User}
             title="Edit Profile"
             description="Update your details"
           />
@@ -87,7 +86,10 @@ export default function DashboardHome() {
       {/* Recent Blogs */}
       {myBlogs?.items && myBlogs.items.length > 0 && (
         <div className="mt-8 overflow-hidden rounded-xl border border-border bg-card p-8 shadow-modern">
-          <h2 className="mb-6 text-2xl font-black">Recent Blogs 📝</h2>
+          <h2 className="mb-6 flex items-center gap-2 text-2xl font-black">
+            <ScrollText className="h-5 w-5 text-primary" />
+            Recent Blogs
+          </h2>
           <div className="space-y-4">
             {myBlogs.items.slice(0, 5).map((blog: Blog) => (
               <Link
