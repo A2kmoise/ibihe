@@ -4,14 +4,11 @@ import { useQuery } from '@tanstack/react-query'
 import { api } from '@/lib/api/client'
 import { useState, useRef, useEffect } from 'react'
 import type { Blog } from '@/lib/api/types'
-import { ChevronLeft, ChevronRight, Rocket, Newspaper, TrendingUp, Megaphone } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Rocket, Newspaper, TrendingUp, Megaphone, Search, Mail, CheckCircle2 } from 'lucide-react'
+import { Navbar } from '@/components/Navbar'
+import { toast } from 'sonner'
 
 // Mock ads data
-const Navbar = () => (
-  <nav className="fixed top-0 left-0 w-full flex items-center justify-between px-6 py-3 bg-white/30 backdrop-blur-md border-b border-white/20">
-    <div className="text-xl font-bold text-primary">Menya</div>
-  </nav>
-);
 const mockAds = [
   {
     id: 1,
@@ -40,13 +37,24 @@ export default function LandingPage() {
   const [activeFilter, setActiveFilter] = useState<string>('all')
   const [sortBy, setSortBy] = useState<'newest' | 'oldest'>('newest')
   const [page, setPage] = useState(1)
+  const [searchDraft, setSearchDraft] = useState('')
+  const [searchQuery, setSearchQuery] = useState('')
   const [carouselSlide, setCarouselSlide] = useState(0)
+  const [newsletterEmail, setNewsletterEmail] = useState('')
+  const [newsletterSubscribed, setNewsletterSubscribed] = useState(false)
   const blogSectionRef = useRef<HTMLElement>(null)
 
-  // Fetch 10 blogs and split them
+  // Fetch blogs based on active filters, search, and page
   const { data: allBlogs, isLoading: isLoadingBlogs } = useQuery({
-    queryKey: ['all-blogs', page],
-    queryFn: () => api.listBlogs({ page, pageSize: 10, sort: 'newest' }),
+    queryKey: ['all-blogs', page, activeFilter, sortBy, searchQuery],
+    queryFn: () =>
+      api.listBlogs({
+        page,
+        pageSize: 10,
+        sort: sortBy,
+        category: activeFilter === 'all' ? undefined : activeFilter,
+        search: searchQuery || undefined,
+      }),
   })
 
   // Fetch carousel blogs (first 5 featured blogs)
@@ -78,8 +86,29 @@ export default function LandingPage() {
 
   const handlePageChange = (newPage: number) => {
     setPage(newPage)
-    // Scroll to blog section
     blogSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    setSearchQuery(searchDraft.trim())
+    setPage(1)
+    blogSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+
+  const handleCategorySelect = (category: string) => {
+    setActiveFilter(category.toLowerCase())
+    setPage(1)
+  }
+
+  const handleNewsletterSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!newsletterEmail || !newsletterEmail.includes('@')) {
+      toast.error('Please enter a valid email address.')
+      return
+    }
+    setNewsletterSubscribed(true)
+    toast.success('Welcome to Menya Weekly! Check your inbox soon.')
   }
 
   return (
@@ -192,7 +221,7 @@ export default function LandingPage() {
                   key={category}
                   variant={activeFilter === category.toLowerCase() ? 'default' : 'outline'}
                   size="sm"
-                  onClick={() => setActiveFilter(category.toLowerCase())}
+                  onClick={() => handleCategorySelect(category)}
                   className="rounded-full font-semibold transition-modern hover:scale-105"
                 >
                   {category}
@@ -209,7 +238,7 @@ export default function LandingPage() {
               <Button
                 variant={sortBy === 'newest' ? 'default' : 'outline'}
                 size="sm"
-                onClick={() => setSortBy('newest')}
+                onClick={() => { setSortBy('newest'); setPage(1); }}
                 className="rounded-full font-semibold transition-modern hover:scale-105"
               >
                 Newest First
@@ -217,7 +246,7 @@ export default function LandingPage() {
               <Button
                 variant={sortBy === 'oldest' ? 'default' : 'outline'}
                 size="sm"
-                onClick={() => setSortBy('oldest')}
+                onClick={() => { setSortBy('oldest'); setPage(1); }}
                 className="rounded-full font-semibold transition-modern hover:scale-105"
               >
                 Oldest First
@@ -225,18 +254,20 @@ export default function LandingPage() {
             </div>
 
             {/* Right Side: Search Bar */}
-            <div className="flex-shrink-0 w-80">
+            <form onSubmit={handleSearchSubmit} className="flex-shrink-0 w-80">
               <div className="relative">
                 <input
                   type="text"
-                  placeholder="Search blogs, topics, authors..."
+                  placeholder="Search stories, topics..."
+                  value={searchDraft}
+                  onChange={(e) => setSearchDraft(e.target.value)}
                   className="h-10 w-full rounded-full border-2 border-border bg-background pl-4 pr-24 text-sm font-medium outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
                 />
-                <Button className="absolute right-1 top-1/2 h-8 -translate-y-1/2 rounded-full bg-primary px-6 font-semibold text-primary-foreground shadow-modern transition-modern hover:scale-105">
+                <Button type="submit" className="absolute right-1 top-1/2 h-8 -translate-y-1/2 rounded-full bg-primary px-5 font-semibold text-primary-foreground shadow-modern transition-modern hover:scale-105">
                   Search
                 </Button>
               </div>
-            </div>
+            </form>
           </div>
         </div>
       </section>
@@ -342,23 +373,35 @@ export default function LandingPage() {
               </div>
             ) : (
               <div className="space-y-6">
-                {rightBlogs.map((blog: Blog) => (
+                {rightBlogs.map((blog: Blog, idx: number) => (
                   <Link
                     key={blog.id}
                     to={`/blogs/${blog.slug}`}
                     className="group block overflow-hidden rounded-xl border border-border bg-card shadow-modern transition-modern hover:scale-[1.02] hover:shadow-modern-lg"
                   >
                     {blog.coverImage && (
-                      <img
-                        src={blog.coverImage}
-                        alt={blog.title}
-                        className="aspect-video w-full object-cover transition-transform group-hover:scale-105"
-                      />
+                      <div className="relative">
+                        <img
+                          src={blog.coverImage}
+                          alt={blog.title}
+                          className="aspect-video w-full object-cover transition-transform group-hover:scale-105"
+                        />
+                        <span className="absolute left-3 top-3 flex h-8 w-8 items-center justify-center rounded-lg bg-black/75 text-xs font-black text-white backdrop-blur-sm">
+                          #{String(idx + 1).padStart(2, '0')}
+                        </span>
+                      </div>
                     )}
                     <div className="p-5">
-                      <span className="inline-block rounded-full bg-primary/10 px-3 py-1 text-xs font-bold text-primary">
-                        {blog.category.name}
-                      </span>
+                      <div className="flex items-center justify-between">
+                        <span className="inline-block rounded-full bg-primary/10 px-3 py-1 text-xs font-bold text-primary">
+                          {blog.category.name}
+                        </span>
+                        {!blog.coverImage && (
+                          <span className="text-xs font-black text-muted-foreground">
+                            #{String(idx + 1).padStart(2, '0')}
+                          </span>
+                        )}
+                      </div>
                       <h3 className="mt-3 text-lg font-bold leading-tight group-hover:text-primary">{blog.title}</h3>
                       <p className="mt-2 text-sm text-muted-foreground line-clamp-2">{blog.excerpt}</p>
                       <div className="mt-4 flex items-center gap-2 text-xs text-muted-foreground">
@@ -439,6 +482,49 @@ export default function LandingPage() {
             </Button>
           </div>
         )}
+      </section>
+
+      {/* Newsletter / Reader Capture Section */}
+      <section className="border-t border-border bg-card py-16">
+        <div className="mx-auto max-w-4xl px-4">
+          <div className="overflow-hidden rounded-2xl border-2 border-border bg-gradient-to-br from-primary/10 via-background to-card p-8 md:p-12 shadow-modern">
+            <div className="flex flex-col items-center text-center">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-modern">
+                <Mail className="h-6 w-6" />
+              </div>
+              <h2 className="mt-6 text-3xl font-black md:text-4xl">
+                Stay Ahead with Menya Weekly
+              </h2>
+              <p className="mt-3 max-w-xl text-base text-muted-foreground">
+                Get a curated digest of top essays, technology deep dives, and creative writing delivered every Sunday. No spam, ever.
+              </p>
+
+              {newsletterSubscribed ? (
+                <div className="mt-6 flex items-center gap-2 rounded-full bg-primary/10 px-5 py-2.5 text-sm font-bold text-primary">
+                  <CheckCircle2 className="h-5 w-5" />
+                  You're on the list! Check your inbox soon.
+                </div>
+              ) : (
+                <form onSubmit={handleNewsletterSubmit} className="mt-8 flex w-full max-w-md flex-col gap-3 sm:flex-row">
+                  <input
+                    type="email"
+                    placeholder="Enter your email address"
+                    value={newsletterEmail}
+                    onChange={(e) => setNewsletterEmail(e.target.value)}
+                    className="h-12 flex-1 rounded-xl border-2 border-border bg-background px-4 text-sm font-medium outline-none focus:border-primary"
+                    required
+                  />
+                  <Button
+                    type="submit"
+                    className="h-12 rounded-xl bg-primary px-6 font-bold text-primary-foreground shadow-modern transition-modern hover:scale-105"
+                  >
+                    Subscribe
+                  </Button>
+                </form>
+              )}
+            </div>
+          </div>
+        </div>
       </section>
 
       {/* Call to Action */}
