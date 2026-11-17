@@ -32,7 +32,7 @@ export function Navbar() {
   return (
     <header className="sticky top-0 z-40 border-b-2 border-border bg-background">
       <div className="mx-auto flex h-16 max-w-7xl items-center gap-4 px-4">
-        <Link to="/home" className="flex items-center gap-2">
+        <Link to="/" className="flex items-center gap-2">
           <svg className="h-8 w-8 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M12 19l7-7 3 3-7 7-3-3z"></path>
             <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"></path>
