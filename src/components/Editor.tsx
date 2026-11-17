@@ -93,6 +93,16 @@ export function Editor({
         />
       </div>
       <EditorContent editor={editor} />
+      <div className="flex items-center justify-between border-t-2 border-border bg-muted/40 px-3 py-2 text-xs font-semibold text-muted-foreground">
+        <div className="flex items-center gap-3">
+          <span>{editor.getText().trim().split(/\s+/).filter(Boolean).length} words</span>
+          <span>·</span>
+          <span>{editor.getText().length} characters</span>
+        </div>
+        <div>
+          <span>~{Math.max(1, Math.ceil(editor.getText().trim().split(/\s+/).filter(Boolean).length / 200))} min read</span>
+        </div>
+      </div>
     </div>
   );
 }
