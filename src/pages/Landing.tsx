@@ -5,7 +5,6 @@ import { api } from '@/lib/api/client'
 import { useState, useRef, useEffect } from 'react'
 import type { Blog } from '@/lib/api/types'
 import { ChevronLeft, ChevronRight, Rocket, Newspaper, TrendingUp, Megaphone, Search, Mail, CheckCircle2 } from 'lucide-react'
-import { Navbar } from '@/components/Navbar'
 import { toast } from 'sonner'
 
 // Mock ads data
@@ -113,7 +112,7 @@ export default function LandingPage() {
 
   return (
     <div className="bg-background">
-  <Navbar />
+{/* Not really needed <Navbar /> */}
 
       {/* Auto-Sliding Carousel / Header Large Images Slot */}
       <section className="border-b border-border bg-background">
@@ -535,7 +534,10 @@ export default function LandingPage() {
             Join thousands of writers sharing their stories on menya
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-4">
-            <Button asChild size="lg" className="rounded-xl border-2 border-primary-foreground/20 bg-primary-foreground font-bold text-primary shadow-modern transition-modern hover:scale-105  hover:text-white">
+            <Button asChild size="lg" className="rounded-xl border-2 border-primary-foreground/20 bg-primary-foreground font-bold text-primary shadow-modern transition-modern hover:scale-105 hover:text-white">
+              <Link to="/register">Start Writing</Link>
+            </Button>
+            <Button asChild variant="outline" size="lg" className="rounded-xl border-2 border-primary-foreground/40 bg-transparent font-bold text-primary-foreground shadow-modern transition-modern hover:scale-105 hover:bg-white/10">
               <Link to="/home">Learn More</Link>
             </Button>
           </div>
