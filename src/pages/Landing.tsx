@@ -129,7 +129,7 @@ export default function LandingPage() {
 
       {/* Auto-Sliding Carousel / Header Large Images Slot */}
       <section className="border-b border-border bg-background">
-        <div className="w-full px-4 py-12">
+        <div className="w-full px-6 lg:px-8 py-12">
           {isLoadingCarousel ? (
             <div className="relative aspect-[21/9] w-full overflow-hidden rounded-2xl border-2 border-border bg-muted/60 shadow-modern">
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-muted/30">
@@ -219,7 +219,7 @@ export default function LandingPage() {
 
       {/* Filters Section */}
       <section className="border-b border-border bg-background mt-8">
-        <div className="mx-auto max-w-7xl px-4 py-6">
+        <div className="mx-auto max-w-7xl px-6 lg:px-8 py-6">
           {/* All Filters in One Row */}
           <div className="flex flex-wrap items-center justify-between gap-4">
             {/* Left Side: Categories and Sort */}
@@ -308,7 +308,7 @@ export default function LandingPage() {
       </section>
 
       {/* Main Content Section */}
-      <section ref={blogSectionRef} className="mx-auto max-w-7xl px-4 py-12">
+      <section ref={blogSectionRef} className="mx-auto max-w-7xl px-6 lg:px-8 py-12">
         <div className="grid gap-8 lg:grid-cols-3">
           {/* Left Column Blogs */}
           <div className="lg:col-span-1">
@@ -498,7 +498,7 @@ export default function LandingPage() {
 
       {/* Newsletter / Reader Capture Section */}
       <section className="border-t border-border bg-card py-16">
-        <div className="mx-auto max-w-4xl px-4">
+        <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="overflow-hidden rounded-2xl border-2 border-border bg-gradient-to-br from-primary/10 via-background to-card p-8 md:p-12 shadow-modern">
             <div className="flex flex-col items-center text-center">
               <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-modern">
