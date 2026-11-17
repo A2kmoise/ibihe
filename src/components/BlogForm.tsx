@@ -4,7 +4,7 @@ import { api } from "@/lib/api/client";
 import { Editor } from "@/components/Editor";
 import { ImageUpload } from "@/components/ImageUpload";
 import { Button } from "@/components/ui/button";
-import { X, Eye, EyeOff } from "lucide-react";
+import { X, Eye, EyeOff, Globe, Share2, FileText, CheckCircle } from "lucide-react";
 import type { Blog } from "@/lib/api/types";
 
 export interface BlogFormValue {
@@ -48,6 +48,7 @@ export function BlogForm({
   const [tags, setTags] = useState<string[]>(initial?.tags || []);
   const [tagInput, setTagInput] = useState("");
   const [preview, setPreview] = useState(false);
+  const [previewTab, setPreviewTab] = useState<"story" | "social">("story");
   const [error, setError] = useState("");
   const toLocalDatetime = (iso?: string) => {
     if (!iso) return undefined
@@ -91,11 +92,37 @@ export function BlogForm({
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-10">
-      <div className="mb-6 flex items-center justify-between border-b-2 border-border pb-4">
-        <h1 className="text-3xl font-black tracking-tight">{initial?.id ? "Edit blog" : "New blog"}</h1>
-        <Button variant="outline" className="border-2 border-border font-semibold" onClick={() => setPreview((p) => !p)}>
-          {preview ? <><EyeOff className="mr-2 h-4 w-4" /> Edit</> : <><Eye className="mr-2 h-4 w-4" /> Preview</>}
-        </Button>
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-4 border-b-2 border-border pb-4">
+        <div>
+          <h1 className="text-3xl font-black tracking-tight">{initial?.id ? "Edit blog" : "New blog"}</h1>
+          <p className="mt-1 flex items-center gap-1.5 text-xs font-semibold text-muted-foreground">
+            <CheckCircle className="h-3.5 w-3.5 text-primary" />
+            {initial?.id ? "Draft sync ready" : "New draft in progress"}
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          {preview && (
+            <div className="flex rounded-lg border-2 border-border bg-card p-0.5">
+              <button
+                type="button"
+                onClick={() => setPreviewTab("story")}
+                className={`flex items-center gap-1.5 rounded-md px-3 py-1 text-xs font-bold transition-colors ${previewTab === "story" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+              >
+                <FileText className="h-3.5 w-3.5" /> Story
+              </button>
+              <button
+                type="button"
+                onClick={() => setPreviewTab("social")}
+                className={`flex items-center gap-1.5 rounded-md px-3 py-1 text-xs font-bold transition-colors ${previewTab === "social" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+              >
+                <Share2 className="h-3.5 w-3.5" /> SEO & Social
+              </button>
+            </div>
+          )}
+          <Button variant="outline" className="border-2 border-border font-semibold" onClick={() => setPreview((p) => !p)}>
+            {preview ? <><EyeOff className="mr-2 h-4 w-4" /> Edit</> : <><Eye className="mr-2 h-4 w-4" /> Preview</>}
+          </Button>
+        </div>
       </div>
 
       {error && (
@@ -105,11 +132,54 @@ export function BlogForm({
       )}
 
       {preview ? (
-        <article>
-          <h1 className="text-4xl font-black tracking-tight md:text-5xl">{title || "Untitled"}</h1>
-          {coverImage && <img src={coverImage} className="mt-6 aspect-[16/9] w-full border-2 border-border object-cover" alt="" />}
-          <div className="prose-content mt-8" dangerouslySetInnerHTML={{ __html: content }} />
-        </article>
+        previewTab === "story" ? (
+          <article className="rounded-2xl border-2 border-border bg-card p-6 md:p-10 shadow-modern">
+            <h1 className="text-4xl font-black tracking-tight md:text-5xl">{title || "Untitled"}</h1>
+            {coverImage && <img src={coverImage} className="mt-6 aspect-[16/9] w-full rounded-xl border-2 border-border object-cover" alt="" />}
+            <div className="prose-content mt-8" dangerouslySetInnerHTML={{ __html: content }} />
+          </article>
+        ) : (
+          <div className="space-y-8 rounded-2xl border-2 border-border bg-card p-6 md:p-8 shadow-modern">
+            <div>
+              <h2 className="flex items-center gap-2 text-lg font-black">
+                <Globe className="h-5 w-5 text-primary" />
+                Google Search Result Preview
+              </h2>
+              <p className="mt-1 text-xs text-muted-foreground">How this post appears when discovered on search engines.</p>
+              <div className="mt-4 rounded-xl border border-border bg-background p-4 max-w-xl">
+                <p className="text-xs text-muted-foreground">https://menya.rw › blogs › {(title || "untitled").toLowerCase().replace(/[^a-z0-9]+/g, "-")}</p>
+                <h3 className="mt-1 text-lg font-bold text-blue-600 hover:underline cursor-pointer">{title || "Post title appears here"}</h3>
+                <p className="mt-1 text-xs text-muted-foreground line-clamp-2">
+                  {excerpt || "Add an excerpt to control the summary text shown under your title on Google search results."}
+                </p>
+              </div>
+            </div>
+
+            <div className="border-t border-border pt-6">
+              <h2 className="flex items-center gap-2 text-lg font-black">
+                <Share2 className="h-5 w-5 text-primary" />
+                Social Card Preview (X & LinkedIn)
+              </h2>
+              <p className="mt-1 text-xs text-muted-foreground">How this post looks when shared across social networks.</p>
+              <div className="mt-4 overflow-hidden rounded-xl border border-border bg-background max-w-lg shadow-sm">
+                {coverImage ? (
+                  <img src={coverImage} alt="Social Card" className="aspect-[1.91/1] w-full object-cover" />
+                ) : (
+                  <div className="aspect-[1.91/1] w-full bg-muted flex items-center justify-center text-xs text-muted-foreground font-semibold">
+                    No cover image uploaded yet
+                  </div>
+                )}
+                <div className="p-4">
+                  <p className="text-[11px] uppercase tracking-wider text-muted-foreground font-bold">menya.rw</p>
+                  <h4 className="mt-1 font-bold leading-tight">{title || "Your Post Title"}</h4>
+                  <p className="mt-1 text-xs text-muted-foreground line-clamp-2">
+                    {excerpt || "Your excerpt summary will be previewed here when readers share your link."}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )
       ) : (
         <div className="space-y-6">
           <div>
