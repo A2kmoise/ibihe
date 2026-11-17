@@ -65,17 +65,17 @@ export default function RegisterPage() {
           />
         </div>
         <div className="relative flex h-full flex-col justify-between p-12">
-          <div className="flex items-center gap-2">
+          <Link to="/" className="flex items-center gap-2">
             <svg className="h-10 w-10 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M12 19l7-7 3 3-7 7-3-3z"></path>
               <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"></path>
               <path d="M2 2l7.586 7.586"></path>
               <circle cx="11" cy="11" r="2"></circle>
             </svg>
-            <Link to="/" className="text-4xl font-black text-primary-foreground">
+            <span className="text-4xl font-black text-primary-foreground">
               menya<span className="text-white">.</span>
-            </Link>
-          </div>
+            </span>
+          </Link>
           <div className="max-w-md">
             <h2 className="text-4xl font-black text-primary-foreground">Start Your Journey</h2>
             <p className="mt-4 text-lg text-primary-foreground/90">
@@ -88,15 +88,17 @@ export default function RegisterPage() {
       {/* Right Side - Register Form */}
       <div className="flex w-full items-center justify-center bg-background p-8 lg:w-1/2">
         <div className="w-full max-w-md">
-          <div className="mb-8 flex items-center justify-center gap-2 lg:hidden">
-            <svg className="h-8 w-8 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M12 19l7-7 3 3-7 7-3-3z"></path>
-              <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"></path>
-              <path d="M2 2l7.586 7.586"></path>
-              <circle cx="11" cy="11" r="2"></circle>
-            </svg>
-            <Link to="/" className="text-3xl font-black">
-              menya<span className="text-primary">.</span>
+          <div className="mb-8 flex items-center justify-center lg:hidden">
+            <Link to="/" className="flex items-center gap-2">
+              <svg className="h-8 w-8 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 19l7-7 3 3-7 7-3-3z"></path>
+                <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"></path>
+                <path d="M2 2l7.586 7.586"></path>
+                <circle cx="11" cy="11" r="2"></circle>
+              </svg>
+              <span className="text-3xl font-black">
+                menya<span className="text-primary">.</span>
+              </span>
             </Link>
           </div>
 
