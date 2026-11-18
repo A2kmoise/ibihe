@@ -14,6 +14,7 @@ import BlogDetailPage from './pages/BlogDetail'
 import CategoryPage from './pages/Category'
 import TagPage from './pages/Tag'
 import ForgotPasswordPage from './pages/ForgotPassword'
+import TermsAndPoliciesPage from './pages/TermsAndPolicies'
 
 // Dashboard
 import DashboardLayout from './pages/dashboard/Layout'
@@ -76,6 +77,9 @@ export default function App() {
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/about" element={<AboutPage />} />
+          <Route path="/terms-and-policies" element={<TermsAndPoliciesPage />} />
+          <Route path="/terms" element={<TermsAndPoliciesPage />} />
+          <Route path="/privacy" element={<TermsAndPoliciesPage />} />
           <Route path="/blogs/:slug" element={<BlogDetailPage />} />
           <Route path="/categories/:slug" element={<CategoryPage />} />
           <Route path="/tags/:tag" element={<TagPage />} />
