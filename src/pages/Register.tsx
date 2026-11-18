@@ -197,7 +197,10 @@ export default function RegisterPage() {
           </p>
 
           <p className="mt-6 text-center text-xs text-muted-foreground">
-            By signing up, you agree to our Terms of Service and Privacy Policy
+            By signing up, you agree to our{' '}
+            <Link to="/terms-and-policies" className="font-bold text-primary underline underline-offset-2 hover:text-primary/80">
+              Terms of Service and Privacy Policy
+            </Link>
           </p>
         </div>
       </div>
