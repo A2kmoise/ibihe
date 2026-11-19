@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom'
 import { Navbar } from '@/components/Navbar'
-import { Button } from '@/components/ui/button'
-import { ArrowLeft, Home, Compass, Sparkles, Feather, Users, Shield, ArrowRight } from 'lucide-react'
+import { Home, Compass, Feather, Users, ArrowRight } from 'lucide-react'
 
 export default function AboutPage() {
   return (
@@ -9,29 +8,6 @@ export default function AboutPage() {
       <Navbar />
 
       <main className="mx-auto max-w-4xl px-4 py-12 md:py-16">
-        {/* Top Navigation Row: Go to Home & Return to Landing */}
-        <div className="mb-10 flex flex-wrap items-center justify-between gap-4 border-b border-border pb-6">
-          <div className="flex flex-wrap items-center gap-3">
-            <Button asChild variant="outline" size="sm" className="rounded-full text-xs font-bold gap-2 transition-modern hover:scale-105">
-              <Link to="/">
-                <ArrowLeft className="h-4 w-4 text-primary" />
-                Return to Landing
-              </Link>
-            </Button>
-            <Button asChild variant="outline" size="sm" className="rounded-full text-xs font-bold gap-2 transition-modern hover:scale-105">
-              <Link to="/home">
-                <Home className="h-4 w-4 text-primary" />
-                Go to Home
-              </Link>
-            </Button>
-          </div>
-
-          <span className="text-xs font-semibold text-muted-foreground flex items-center gap-1.5">
-            <Sparkles className="h-3.5 w-3.5 text-primary" />
-            The menya story & manifesto
-          </span>
-        </div>
-
         {/* Hero Section */}
         <div className="space-y-4">
           <div className="inline-block rounded-full bg-primary/10 px-3 py-1 text-xs font-bold text-primary">
