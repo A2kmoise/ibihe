@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { Navbar } from '@/components/Navbar'
-import { ArrowLeft, Home, ShieldCheck, FileText, Lock, CheckCircle2 } from 'lucide-react'
+import { ShieldCheck, FileText, Lock } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 export default function TermsAndPoliciesPage() {
@@ -9,32 +9,16 @@ export default function TermsAndPoliciesPage() {
       <Navbar />
 
       <main className="mx-auto max-w-4xl px-4 py-12 md:py-16">
-        {/* Navigation Bar */}
-        <div className="mb-8 flex flex-wrap items-center justify-between gap-4 border-b border-border pb-6">
-          <div className="flex items-center gap-3">
-            <Button asChild variant="outline" size="sm" className="rounded-full text-xs font-bold gap-1.5">
-              <Link to="/">
-                <ArrowLeft className="h-3.5 w-3.5" />
-                Return to Landing
-              </Link>
-            </Button>
-            <Button asChild variant="ghost" size="sm" className="rounded-full text-xs font-bold gap-1.5">
-              <Link to="/home">
-                <Home className="h-3.5 w-3.5" />
-                Go to Home
-              </Link>
-            </Button>
-          </div>
-          <span className="text-xs text-muted-foreground font-semibold">
-            Last updated: November 2026
-          </span>
-        </div>
-
         {/* Header */}
         <div className="mb-12">
-          <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-bold text-primary">
-            <ShieldCheck className="h-4 w-4" />
-            Legal & Transparency
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-bold text-primary">
+              <ShieldCheck className="h-4 w-4" />
+              Legal & Transparency
+            </div>
+            <span className="text-xs font-semibold text-muted-foreground">
+              Last updated: November 2026
+            </span>
           </div>
           <h1 className="mt-4 text-4xl font-black tracking-tight md:text-5xl">
             Terms of Service & Privacy Policy
